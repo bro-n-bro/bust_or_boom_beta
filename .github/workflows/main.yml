@@ -55,7 +55,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build signer
+      - name: Build app
         run: npm run build
 
       - name: Deploy 🚀
