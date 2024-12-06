@@ -45,7 +45,7 @@ jobs:
           fetch-depth: 0
 
       - name: Pull latest changes
-        run: git pull origin dev
+        run: git pull origin main
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
