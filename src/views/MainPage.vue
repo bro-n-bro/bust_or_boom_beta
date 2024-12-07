@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <CreateUserForm v-if="store.isRegistered !== null && !store.isRegistered" />
+        <CreateUserForm v-if="store.isRegistered !== null && store.isRegistered === false" />
 
         <Game v-if="store.isRegistered" />
     </div>
@@ -8,7 +8,7 @@
 
 
 <script setup>
-    import { ref, onBeforeMount } from 'vue'
+    import { onBeforeMount } from 'vue'
     import { useGlobalStore } from '@/store'
 
     import CreateUserForm from '@/components/CreateUserForm.vue'
@@ -18,8 +18,3 @@
 
     onBeforeMount(async () => await store.checkUserAccount())
 </script>
-
-
-<style scoped>
-
-</style>

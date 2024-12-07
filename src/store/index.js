@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useLocalStorage } from '@vueuse/core'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 const jetpack = new JetPack()
@@ -7,7 +8,7 @@ const jetpack = new JetPack()
 export const useGlobalStore = defineStore('global', {
     state: () => ({
         isConnected: false,
-        isRegistered: false,
+        isRegistered: null,
 
         user: null,
         balance: null,
@@ -16,6 +17,8 @@ export const useGlobalStore = defineStore('global', {
 
         websocket: null,
         client: null,
+
+        bets: useLocalStorage('bets', []),
 
         chainID: 'pion-1',
         exponent: 6,
@@ -135,9 +138,9 @@ export const useGlobalStore = defineStore('global', {
             this.websocket.onmessage = async msg => {
                 this.ChainBlockInfo = JSON.parse(msg.data)
 
-                this.getPriceInfo()
-
                 this.getRoundInfo()
+
+                this.getPriceInfo()
             }
         },
 
@@ -182,6 +185,80 @@ export const useGlobalStore = defineStore('global', {
                     .then(data => console.log(data))
             } catch (error) {
                 console.error(error)
+            }
+        },
+
+
+        async createBet({ amount, prize, round_id, type }) {
+            let msg = {}
+
+            if (type === 'bear') {
+                msg = {
+                    bet_bear: {
+                        amount: String(amount * Math.pow(10, this.exponent)),
+                        round_id: String(round_id)
+                    }
+                }
+            }
+
+            if (type === 'bull') {
+                msg = {
+                    bet_bull: {
+                        amount: String(amount * Math.pow(10, this.exponent)),
+                        round_id: String(round_id)
+                    }
+                }
+            }
+
+            await jetpack.sendTx([{
+                typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+                value: {
+                    sender: jetpack.getAddress(),
+                    contract: 'neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc',
+                    msg: new TextEncoder().encode(JSON.stringify(msg)),
+                    funds: [{
+                        denom: 'factory/neutron1heydp9f3977kq7c4fecrkra9etdqlu9al954cs/uboom',
+                        amount: String(amount * Math.pow(10, this.exponent))
+                    }]
+                }
+            }]).then(async (result) => {
+                if (result.type === 'error') {
+                    console.log(error)
+                }
+
+                if (result.type === 'tx') {
+                    this.bets.push({
+                        bet_id: Date.now(),
+                        type: type,
+                        amount: amount,
+                        prize: prize,
+                        round_id: round_id,
+                        roundInfo: this.roundInfo,
+                        finished_round: null
+                    })
+
+                    this.bets.sort((a, b) => b.bet_id - a.bet_id)
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+        },
+
+
+        deleteBet(bet_id) {
+            this.bets = this.bets.filter(bet => bet.id !== bet_id)
+        },
+
+
+        async getFinishedRound(round_id) {
+            try {
+                return await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
+                    finished_round: {
+                        round_id: String(round_id)
+                    }
+                })
+            } catch (error) {
+                return false
             }
         }
     }

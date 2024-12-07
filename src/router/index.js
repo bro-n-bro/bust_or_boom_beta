@@ -19,6 +19,14 @@ const routes = [
 			accessDenied: ['not_connected']
 		}
 	},
+	{
+		path: '/my_bets',
+		name: 'MyBetsPage',
+		component: () => import('../views/MyBetsPage.vue'),
+		meta: {
+			accessDenied: ['not_connected']
+		}
+	},
 ]
 
 

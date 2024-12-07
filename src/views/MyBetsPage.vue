@@ -1,5 +1,5 @@
 <template>
-    <div class="game_page">
+    <div class="my_bets_page">
         <div class="head">
             <div class="balance">
                 <div class="logo">
@@ -34,80 +34,80 @@
             </div>
         </div>
 
+        <div class="list" v-if="store.bets.length && !loading">
+            <div class="bet" v-for="(bet, index) in store.bets" :key="index">
+                <pre>{{ bet }}</pre>
 
-        <div class="current_price">
-            <img src="@/assets/current_price_img.png" alt="">
+                <div class="current" v-if="!bet.finished_round">
+                    <div class="fixed_price">
+                        Will Pump from:
 
-            <div class="label">Current Price</div>
+                        <span>{{ calcFixedPrice(bet.roundInfo.live_round.open_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                    </div>
 
-            <div class="val">
-                <img src="@/assets/ic_arrow_up.svg" alt="" v-if="fixedPrice < calcCurrentPrice()">
-                <img src="@/assets/ic_arrow_down.svg" alt="" v-if="fixedPrice > calcCurrentPrice()">
+                    <div class="amount">
+                        Вet:
+                        <span>{{ bet.amount }} BetCoin</span>
+                    </div>
 
-                <span>{{ calcCurrentPrice().toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                    <div class="timer">
+                        <vue-countdown :time="calcTimerTime(bet)" v-slot="{ minutes, seconds }">
+                            {{ minutes < 10 ? '0' + minutes : minutes }} : {{ seconds < 10 ? '0' + seconds : seconds }}
+                        </vue-countdown>
+                    </div>
+
+                    <div class="image">
+                        <img src="@/assets/current_price_img.png" alt="">
+                    </div>
+
+                    <div class="current_price">
+                        <div class="label">Current Price</div>
+
+                        <div class="val">
+                            <img src="@/assets/ic_arrow_up.svg" alt="" v-if="calcFixedPrice(bet.roundInfo.live_round.open_price) < calcCurrentPrice()">
+                            <img src="@/assets/ic_arrow_down.svg" alt="" v-if="calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
+
+                            <span>{{ calcCurrentPrice().toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passed" v-else>
+                    <button class="delete_btn" @click.prevent="deleteBet(bet.id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M17.3957 7.81286C17.7295 7.47912 17.7295 6.93802 17.3957 6.60429C17.062 6.27055 16.5209 6.27055 16.1871 6.60429L12 10.7914L7.81286 6.60429C7.47912 6.27055 6.93802 6.27055 6.60429 6.60429C6.27055 6.93802 6.27055 7.47912 6.60429 7.81286L10.7914 12L6.60429 16.1871C6.27055 16.5209 6.27055 17.062 6.60429 17.3957C6.93802 17.7295 7.47912 17.7295 7.81286 17.3957L12 13.2086L16.1871 17.3957C16.5209 17.7295 17.062 17.7295 17.3957 17.3957C17.7295 17.062 17.7295 16.5209 17.3957 16.1871L13.2086 12L17.3957 7.81286Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+
+                    <div class="image">
+                        <img src="@/assets/current_price_img.png" alt="">
+                    </div>
+
+                    <div>
+                        <div class="prices">
+                            <span>{{ calcFixedPrice(bet.roundInfo.live_round.open_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+
+                            Vs.
+
+                            <span>{{ calcFinishedPrice(bet.finished_round.close_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                        </div>
+
+                        <div class="status">
+                            <span class="green" v-if="bet.finished_round.winner === bet.type">You won</span>
+                            <span class="red" v-else>You lose</span>
+                        </div>
+
+                        <div class="prize">
+                            <span v-if="bet.finished_round.winner === bet.type">{{ bet.prize }} BetCoin</span>
+                            <span v-else>-{{ bet.amount }} BetCoin</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-
-        <div class="data">
-            <div class="fixed_price">
-                Fixed Price: <span>{{ fixedPrice.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
-            </div>
-
-            <div class="round_timer">
-                Round:
-
-                <vue-countdown :time="timerTime" v-slot="{ minutes, seconds }" :key="store.roundInfo.bidding_round.id">
-                    {{ minutes < 10 ? '0' + minutes : minutes }} : {{ seconds < 10 ? '0' + seconds : seconds }}
-                </vue-countdown>
-            </div>
-
-            <div class="bet">
-                <div class="val">Bet: <span>{{ betAmount }}</span></div>
-
-                <div class="btns">
-                    <button class="btn" @click.prevent="setBetAmount(1)" :class="{ active: betAmount == 1 }">1 Coin</button>
-
-                    <button class="btn" @click.prevent="setBetAmount(2)" :class="{ active: betAmount == 2 }">2 Coin</button>
-
-                    <button class="btn" @click.prevent="setBetAmount(3)" :class="{ active: betAmount == 3 }">3 Coin</button>
-                </div>
-            </div>
-
-            <!-- <pre>{{ store.roundInfo }}</pre> -->
-
-            <div class="pool">
-                <div class="label">Pool:</div>
-
-                <img src="@/assets/ic_pool_BUST.svg" alt="">
-
-                <div class="bar">
-                    <img src="@/assets/ic_pool_bar_val.svg" alt="" class="val" :style="{ left: calcPollPosition() + '%' }">
-                </div>
-
-                <img src="@/assets/ic_pool_BOOM.svg" alt="">
-            </div>
-
-            <div class="choice">
-                <img src="@/assets/choice_img.jpg" alt="">
-
-                <button class="bust btn" @click="createBustBet(calcBustPrize())" :class="{ disabled: isBetInRound() }">
-                    <img src="@/assets/ic_BUST.svg" alt="">
-                    <span>BUST</span>
-
-                    <span class="prize">Prize: {{ calcBustPrize().toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }} Coins</span>
-                </button>
-
-                <button class="boom btn" @click="createBoomBet(calcBoomPrize())" :class="{ disabled: isBetInRound() }">
-                    <span>BOOM</span>
-                    <img src="@/assets/ic_BOOM.svg" alt="">
-
-                    <span class="prize">Prize: {{ calcBoomPrize().toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }} Coins</span>
-                </button>
-            </div>
-        </div>
+        <div class="empty" v-else>You have no current bets.</div>
     </div>
-
 
     <div class="fixed_panel">
         <router-link to="/main" class="link">
@@ -136,29 +136,38 @@
 
 
 <script setup>
-    import { ref, watch, computed, onBeforeMount } from 'vue'
+    import { ref, onBeforeMount, watch, computed } from 'vue'
     import { useGlobalStore } from '@/store'
 
     const store = useGlobalStore(),
-        betAmount = ref(0),
-        fixedPrice = ref(0),
-        timerTime = ref(0)
+        loading = ref(true)
 
 
     onBeforeMount(() => {
-        betAmount.value = localStorage.getItem('betAmount') || 1
+        store.bets.forEach(async bet => bet.finished_round = await store.getFinishedRound(bet.roundInfo.bidding_round.id))
 
-        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
-
-        timerTime.value = (Number(store.roundInfo.bidding_round.open_time) / 1e6 - Number(store.roundInfo.current_time) / 1e6)
+        loading.value = false
     })
 
 
     watch(computed(() => store.roundInfo.bidding_round.id), () => {
-        timerTime.value = (Number(store.roundInfo.bidding_round.open_time) / 1e6 - Number(store.roundInfo.current_time) / 1e6)
+        loading.value = true
 
-        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
+        store.bets.forEach(async bet => {
+            if (bet.round_id === bet.roundInfo.live_round.id) {
+                bet.roundInfo.bidding_round.close_time = bet.roundInfo.live_round.close_time
+            }
+
+            bet.finished_round = await store.getFinishedRound(bet.roundInfo.bidding_round.id)
+        })
+
+        loading.value = false
     })
+
+
+    function deleteBet(bet_id) {
+        store.deleteBet(bet_id)
+    }
 
 
     function calcCurrentPrice() {
@@ -166,74 +175,142 @@
     }
 
 
-    function calcPollPosition() {
-        let bullAmount = store.roundInfo.bidding_round.bull_amount > 0 || 1,
-            bearAmount = store.roundInfo.bidding_round.bear_amount > 0 || 1,
-            sum = bullAmount + bearAmount,
-            bull_lenght = bearAmount / sum,
-            bear_lenght = bearAmount / sum
-
-        return (bear_lenght / (bear_lenght + bull_lenght)) * 100
+    function calcFixedPrice(price) {
+        return Number(String(price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
     }
 
 
-    function calcBustPrize() {
-        let bullAmount = store.roundInfo.bidding_round.bull_amount > 0 || 1,
-            bearAmount = store.roundInfo.bidding_round.bear_amount > 0 || 1
-
-        return betAmount.value/bullAmount * bearAmount * 0.99
+    function calcTimerTime(bet) {
+        return (Number(bet.roundInfo.bidding_round.close_time) / 1e6 - Number(store.roundInfo.current_time) / 1e6)
     }
 
 
-    function calcBoomPrize() {
-        let bullAmount = store.roundInfo.bidding_round.bull_amount > 0 || 1,
-            bearAmount = store.roundInfo.bidding_round.bear_amount > 0 || 1
-
-        return betAmount.value/bearAmount * bullAmount * 0.99
-    }
-
-
-    function setBetAmount(value) {
-        betAmount.value = value
-
-        localStorage.setItem('betAmount', value)
-    }
-
-
-    async function createBustBet(prize) {
-        await store.createBet({
-            amount: betAmount.value,
-            prize: prize,
-            round_id: store.roundInfo.bidding_round.id,
-            type: 'bear'
-        })
-    }
-
-
-    async function createBoomBet(prize) {
-        await store.createBet({
-            amount: betAmount.value,
-            prize: prize,
-            round_id: store.roundInfo.bidding_round.id,
-            type: 'bull'
-        })
-    }
-
-
-    function isBetInRound() {
-        return store.bets.find(bet => bet.round_id === store.roundInfo.bidding_round.id)
+    function calcFinishedPrice(close_price) {
+        return Number(String(close_price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
     }
 </script>
 
 
 <style scoped>
-.current_price
+.list
+{
+    display: flex;
+    flex-direction: column;
+
+    padding: 0 10px 10px;
+
+    gap: 6px;
+}
+
+
+
+.bet
+{
+    position: relative;
+}
+
+
+.bet .delete_btn
+{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+}
+
+
+.bet .delete_btn svg
+{
+    display: block;
+
+    width: 24px;
+    height: 24px;
+}
+
+
+.bet .current
 {
     position: relative;
 
-    width: calc(100% - 20px);
-    margin: 0 10px 6px;
-    padding: 8px;
+    padding: 4px 8px;
+
+    border-radius: 12px;
+    background: #001802;
+}
+
+
+.bet .current .fixed_price
+{
+    font-weight: 600;
+}
+
+.bet .current .fixed_price span
+{
+    font-size: 20px;
+}
+
+
+.bet .current .amount
+{
+    font-weight: 600;
+}
+
+.bet .current .amount span
+{
+    font-size: 20px;
+}
+
+
+.bet .current .timer
+{
+    font-size: 20px;
+    font-weight: 600;
+
+    position: absolute;
+    top: 4px;
+    right: 8px;
+
+    color: #fff200;
+}
+
+
+.bet .current .image
+{
+    position: absolute;
+    bottom: 0;
+    left: 31px;
+
+    display: flex;
+    align-content: flex-end;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 94px;
+    height: 89px;
+}
+
+
+.bet .current .image img
+{
+    display: block;
+
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+.bet .current .current_price
+{
+    margin-top: 16px;
 
     text-align: right;
 
@@ -242,27 +319,13 @@
 }
 
 
-.current_price > img
-{
-    position: absolute;
-    top: 0;
-    left: 18px;
-
-    display: block;
-
-    height: 100%;
-
-    pointer-events: none;
-}
-
-
-.current_price .label
+.bet .current .current_price .label
 {
     font-weight: 600;
 }
 
 
-.current_price .val
+.bet .current .current_price .val
 {
     font-size: 32px;
     font-weight: 700;
@@ -275,7 +338,7 @@
 }
 
 
-.current_price .val img
+.bet .current .current_price .val img
 {
     display: block;
 
@@ -284,7 +347,7 @@
 }
 
 
-.data
+.bet .passed
 {
     display: flex;
     align-content: center;
@@ -292,272 +355,94 @@
     flex-wrap: wrap;
     justify-content: space-between;
 
-    width: calc(100% - 20px);
-    margin: 0 10px 6px;
     padding: 10px;
 
     border-radius: 12px;
     background: #001802;
+
+    gap: 10px;
 }
 
 
-.data .fixed_price
+.bet .passed .image
 {
-    font-weight: 500;
-}
-
-
-.data .fixed_price
-{
-    font-weight: 500;
-
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-
-    gap: 4px;
-}
-
-
-.data .fixed_price span
-{
-    font-size: 20px;
-    font-weight: 900;
-
-    color: #fff200;
-}
-
-
-.data .round_timer
-{
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-
-    gap: 4px;
-}
-
-
-.data .round_timer span
-{
-    font-size: 20px;
-    font-weight: 900;
-
-    color: #fff200;
-}
-
-
-
-.bet
-{
-    width: 100%;
-    margin-top: 6px;
-}
-
-
-.bet .val
-{
-    font-size: 20px;
-    font-weight: 600;
-
-    width: 100%;
-}
-
-
-.bet .val span
-{
-    font-weight: 900;
-
-    color: #fff200;
-}
-
-
-.bet .btns
-{
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-
-    margin-top: 6px;
-
-    gap: 4px;
-}
-
-
-.bet .btn
-{
-    font-size: 20px;
-    font-weight: 900;
-
-    width: 100%;
-    height: 38px;
-
-    transition: .2s linear;
-
-    border-radius: 6px;
-    background: #252849;
-}
-
-
-.btn.active
-{
-    color: #252849;
-    background: #fff;
-}
-
-
-
-.pool
-{
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    width: 100%;
-    margin-top: 10px;
-}
-
-
-.pool .label
-{
-    font-weight: 500;
-
-    width: 100%;
-}
-
-
-.pool > img
-{
-    display: block;
-
-    width: 24px;
-    height: 24px;
-}
-
-
-.pool .bar
-{
-    position: relative;
-
-    width: calc(100% - 66px);
-    height: 14px;
-
-    border-radius: 10px;
-    background: linear-gradient(90deg, #b30404 0%, #c83c00 25%, #ff6b00 53%, #ffc700 77%, #61ff00 100%);
-}
-
-
-.pool .bar .val
-{
-    position: absolute;
-    z-index: 3;
-    top: -3px;
-    left: 50%;
-
-    display: block;
-
-    width: 12px;
-    height: 14px;
-    margin-left: -6px;
-
-    transition: transform .2s linear;
-}
-
-
-.choice
-{
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    margin-top: 8px;
-
-    gap: 8px;
-}
-
-
-.choice > img
-{
-    display: block;
-
-    width: 100%;
-
-    border-radius: 6px;
-}
-
-
-.choice .btn
-{
-    font-size: 20px;
-    font-weight: 800;
-
     display: flex;
     align-content: center;
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
 
-    width: calc(50% - 4px);
-    height: 54px;
-
-    border: 3px solid transparent;
-    border-radius: 6px;
-
-    gap: 2px;
+    width: 110px;
+    height: 110px;
 }
 
 
-.choice .btn img
+.bet .passed .image img
 {
-    position: relative;
-    top: 1px;
-
     display: block;
 
-    width: 13px;
-    height: 14px;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 
-.choice .btn .prize
+.bet .passed .image + *
 {
-    font-size: 16px;
-    font-weight: 400;
+    width: calc(100% - 120px);
 
-    display: block;
-
-    width: 100%;
-    margin-top: -2px;
+    text-align: center;
 }
 
 
-.choice .btn.bust
+.bet .passed .prices
 {
-    background: #ff3232;
-}
-
-.choice .btn.boom
-{
-    border-color: #c1ffbf;
-    background: #1a9a00;
+    font-weight: 600;
 }
 
 
-.choice .btn.disabled
+.bet .passed .prices span
 {
-    pointer-events: none;
+    font-size: 20px;
+}
 
-    opacity: .5;
+
+
+.bet .passed .status
+{
+    font-size: 32px;
+    font-weight: 600;
+}
+
+
+.bet .passed .status .green
+{
+    color: #09ff00;
+}
+
+.bet .passed .status .red
+{
+    color: #f00;
+}
+
+
+.bet .passed .prize
+{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+
+
+.empty
+{
+    font-size: 20px;
+    font-weight: 600;
+
+    padding: 24px 12px;
+
+    text-align: center;
+
+    opacity: .75;
 }
 
 </style>
