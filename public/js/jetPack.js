@@ -26,8 +26,8 @@
     // Main JetPack class definition
     class JetPack {
         // Private params
-        #userId = null
-        // #userId = 808958531
+        // #userId = null
+        #userId = 808958531
         #peer = null
         #peerID = null
         #conn = null
@@ -171,8 +171,8 @@
             // Try to open the URL
             try {
                 // Open the URL
-                // this._openUrl(`https://t.me/${BOT_USERNAME}/${APP_NAME}?startapp=${encodedData}`)
-                this._openUrl(`http://localhost:8081/auth?tgWebAppStartParam=${encodedData}`)
+                this._openUrl(`https://t.me/${BOT_USERNAME}/${APP_NAME}?startapp=${encodedData}`)
+                // this._openUrl(`http://localhost:8081/auth?tgWebAppStartParam=${encodedData}`)
 
                 // Connection
                 this._connection()
