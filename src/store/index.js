@@ -7,7 +7,7 @@ const jetpack = new JetPack()
 export const useGlobalStore = defineStore('global', {
     state: () => ({
         isConnected: false,
-        isRegistered: null,
+        isRegistered: false,
 
         user: null,
         balance: null,
