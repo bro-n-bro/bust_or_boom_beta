@@ -12,6 +12,14 @@ const routes = [
 		}
 	},
 	{
+		path: '/register',
+		name: 'RegisterPage',
+		component: () => import('../views/RegisterPage.vue'),
+		meta: {
+			accessDenied: ['not_connected']
+		}
+	},
+	{
 		path: '/main',
 		name: 'MainPage',
 		component: () => import('../views/MainPage.vue'),

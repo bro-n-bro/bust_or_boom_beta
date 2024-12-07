@@ -47,6 +47,13 @@
 
         if (!result) {
             isProcess.value = false
+        } else {
+            await store.checkUserAccount()
+
+            if (store.isRegistered) {
+                // Redirect
+                router.push({ path: '/main' })
+            }
         }
     }
 </script>

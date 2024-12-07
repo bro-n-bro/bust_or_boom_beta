@@ -41,9 +41,18 @@
     async function faucet() {
         isFaucetProcess.value = true
 
-        await store.faucet().then(() => {
-            // Redirect
-            router.push({ path: '/main' })
+        await store.faucet().then(async () => {
+            await store.checkUserAccount()
+
+            if (store.isRegistered !== null && store.isRegistered === false) {
+                // Redirect
+                router.push({ path: '/register' })
+            }
+
+            if (store.isRegistered) {
+                // Redirect
+                router.push({ path: '/main' })
+            }
 		}).catch(error => {
             isFaucetProcess.value = false
 

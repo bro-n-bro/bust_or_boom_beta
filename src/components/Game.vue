@@ -50,8 +50,7 @@
 
 
         <div class="data">
-            <pre>{{ store.roundInfo }}</pre>
-
+            <!-- <pre>{{ store.roundInfo }}</pre> -->
 
             <div class="fixed_price">
                 Fixed Price: <span>{{ fixedPrice.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
