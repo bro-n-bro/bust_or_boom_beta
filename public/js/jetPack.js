@@ -394,7 +394,7 @@
                     }
                 })
 
-                // Telegram.WebApp.showAlert('Return to the JetWallet.')
+                Telegram.WebApp.showAlert('Return to the JetWallet.')
             })
         }
 
