@@ -24,8 +24,17 @@
         version = process.env.APP_VERSION || 'unknown'
 
 
-    async function connectWallet() {
-        await store.connectWallet()
+    function connectWallet() {
+        store.connectWallet()
+
+        // store.connectWallet().then(() => {
+        //     // Redirect
+        //     router.push({ path: '/main' })
+		// }).catch(error => {
+        //     isFaucetProcess.value = false
+
+		// 	console.log(error)
+		// })
     }
 
 
