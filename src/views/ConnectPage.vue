@@ -25,14 +25,7 @@
 
 
     async function connectWallet() {
-        await store.connectWallet().then(() => {
-            // Redirect
-            router.push({ path: '/main' })
-		}).catch(error => {
-            isFaucetProcess.value = false
-
-			console.log(error)
-		})
+        await store.connectWallet()
     }
 
 
