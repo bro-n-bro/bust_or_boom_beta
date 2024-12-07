@@ -1,0 +1,67 @@
+name: build_app
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate version
+        run: |
+          NEW_VERSION=$(date +%Y.%m.%d)-${{ github.run_number }}
+          echo '{"schemaVersion": 1, "label": "dev-version", "message": "'$NEW_VERSION'", "color": "blue"}' > version-badge.json
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add version-badge.json
+          git commit -m "Update version to $NEW_VERSION"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify pushed changes
+        run: git log -1
+
+  build_app:
+    needs: update-version
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.10.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest changes
+        run: git pull origin main
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build app
+        run: npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.6.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: build
+          FOLDER: dist
+          CLEAN: true
