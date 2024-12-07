@@ -221,7 +221,7 @@ export const useGlobalStore = defineStore('global', {
                         amount: String(amount * Math.pow(10, this.exponent))
                     }]
                 }
-            }]).then(async (result) => {
+            }]).then((result) => {
                 if (result.type === 'error') {
                     console.log(error)
                 }
@@ -260,6 +260,41 @@ export const useGlobalStore = defineStore('global', {
             } catch (error) {
                 return false
             }
-        }
+        },
+
+
+        async myRewards() {
+            try {
+                return await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
+                    my_pending_reward_rounds: {
+                        player: jetpack.getAddress()
+                    }
+                })
+            } catch (error) {
+                return false
+            }
+        },
+
+
+        async claimRewards() {
+            await jetpack.sendTx([{
+                typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+                value: {
+                    sender: jetpack.getAddress(),
+                    contract: 'neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc',
+                    msg: new TextEncoder().encode(JSON.stringify({ collect_winnings: {} }))
+                }
+            }]).then((result) => {
+                if (result.type === 'error') {
+                    console.log(error)
+                }
+
+                if (result.type === 'tx') {
+                    console.log(result)
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+        },
     }
 })

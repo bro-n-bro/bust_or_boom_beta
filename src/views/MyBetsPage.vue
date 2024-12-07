@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="passed" v-else>
-                    <button class="delete_btn" @click.prevent="deleteBet(bet.id)">
+                    <button class="delete_btn" @click.prevent="deleteBet(bet.bet_id)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M17.3957 7.81286C17.7295 7.47912 17.7295 6.93802 17.3957 6.60429C17.062 6.27055 16.5209 6.27055 16.1871 6.60429L12 10.7914L7.81286 6.60429C7.47912 6.27055 6.93802 6.27055 6.60429 6.60429C6.27055 6.93802 6.27055 7.47912 6.60429 7.81286L10.7914 12L6.60429 16.1871C6.27055 16.5209 6.27055 17.062 6.60429 17.3957C6.93802 17.7295 7.47912 17.7295 7.81286 17.3957L12 13.2086L16.1871 17.3957C16.5209 17.7295 17.062 17.7295 17.3957 17.3957C17.7295 17.062 17.7295 16.5209 17.3957 16.1871L13.2086 12L17.3957 7.81286Z" fill="currentColor"/>
                         </svg>
@@ -105,6 +105,8 @@
         </div>
 
         <div class="empty" v-else>You have no current bets.</div>
+
+        <button class="claim_btn" @click.prevent="claimRewards()" v-if="isRewards">Claim Rewards</button>
     </div>
 
     <div class="fixed_panel">
@@ -138,17 +140,20 @@
     import { useGlobalStore } from '@/store'
 
     const store = useGlobalStore(),
+        isRewards = ref(0),
         loading = ref(true)
 
 
-    onBeforeMount(() => {
+    onBeforeMount(async () => {
         store.bets.forEach(async bet => bet.finished_round = await store.getFinishedRound(bet.roundInfo.bidding_round.id))
+
+        isRewards.value = parseInt((await store.myRewards()).pending_reward_total)
 
         loading.value = false
     })
 
 
-    watch(computed(() => store.roundInfo.bidding_round.id), () => {
+    watch(computed(() => store.roundInfo.bidding_round.id), async () => {
         loading.value = true
 
         store.bets.forEach(async bet => {
@@ -158,6 +163,8 @@
 
             bet.finished_round = await store.getFinishedRound(bet.roundInfo.bidding_round.id)
         })
+
+        isRewards.value = parseInt((await store.myRewards()).pending_reward_total)
 
         loading.value = false
     })
@@ -185,6 +192,15 @@
 
     function calcFinishedPrice(close_price) {
         return Number(String(close_price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
+    }
+
+
+    async function claimRewards() {
+        await store.claimRewards()
+
+        await store.loadBalances()
+
+        isRewards.value = 0
     }
 </script>
 
@@ -441,6 +457,27 @@
     text-align: center;
 
     opacity: .75;
+}
+
+
+
+.claim_btn
+{
+    font-weight: 500;
+
+    position: fixed;
+    z-index: 9;
+    right: 0;
+    bottom: 72px;
+    left: 0;
+
+    width: calc(100% - 40px);
+    height: 52px;
+    margin: 0 auto;
+
+    border-radius: 12px;
+    background: #0f73ff;
+    box-shadow: 0 0 15px #062600;
 }
 
 </style>
