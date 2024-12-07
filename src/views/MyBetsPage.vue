@@ -36,8 +36,6 @@
 
         <div class="list" v-if="store.bets.length && !loading">
             <div class="bet" v-for="(bet, index) in store.bets" :key="index">
-                <pre>{{ bet }}</pre>
-
                 <div class="current" v-if="!bet.finished_round">
                     <div class="fixed_price">
                         Will Pump from:
