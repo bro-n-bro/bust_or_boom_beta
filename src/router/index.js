@@ -1,25 +1,57 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { useGlobalStore } from '@/store'
+
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+	{
+		path: '/',
+		name: 'ConnectPage',
+		component: () => import('../views/ConnectPage.vue'),
+		meta: {
+			accessDenied: ['connected']
+		}
+	},
+	{
+		path: '/main',
+		name: 'MainPage',
+		component: () => import('../views/MainPage.vue'),
+		meta: {
+			accessDenied: ['not_connected']
+		}
+	},
 ]
 
+
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+	history: createWebHistory(process.env.BASE_URL),
+	routes
+})
+
+
+router.beforeResolve((to, from, next) => {
+	let store = useGlobalStore()
+
+	to.matched.some(record => {
+		let access = record.meta.accessDenied
+
+		if(access.length) {
+			if(access.includes('connected') && store.isConnected) {
+				next({ name: 'MainPage' })
+
+				return false
+			}
+
+			if(access.includes('not_connected') && !store.isConnected) {
+				next({ name: 'ConnectPage' })
+
+				return false
+			}
+
+			else {
+				next()
+			}
+		}
+	})
 })
 
 export default router
