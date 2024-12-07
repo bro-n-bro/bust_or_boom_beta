@@ -34,6 +34,14 @@
             </div>
         </div>
 
+        <!-- <div class="filter">
+            <button class="btn" @click.prevent="setFilter('live')">Live</button>
+
+            <button class="btn" @click.prevent="setFilter('won')">Won</button>
+
+            <button class="btn" @click.prevent="setFilter('lose')">Lose</button>
+        </div> -->
+
         <div class="list" v-if="store.bets.length && !loading">
             <div class="bet" v-for="(bet, index) in store.bets" :key="index">
                 <div class="current" v-if="!bet.finished_round">
@@ -78,7 +86,8 @@
                     </button>
 
                     <div class="image">
-                        <img src="@/assets/current_price_img.png" alt="">
+                        <img src="@/assets/bet_result_won.jpg" alt="" v-if="bet.finished_round.winner === bet.type">
+                        <img src="@/assets/bet_result_lose.jpg" alt="" v-else>
                     </div>
 
                     <div>
@@ -206,6 +215,42 @@
 
 
 <style scoped>
+.filter
+{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+
+    width: calc(100% - 20px);
+    margin: 10px;
+
+    border: 1px solid #252849;
+    border-radius: 6px;
+    background: #000e01;
+}
+
+
+.filter .btn
+{
+    font-size: 16px;
+    font-weight: 500;
+
+    width: 100%;
+    height: 22px;
+
+    transition: .2s linear;
+}
+
+
+.filter .btn.active
+{
+    background: #252849;
+}
+
+
+
 .list
 {
     display: flex;
@@ -479,5 +524,8 @@
     background: #0f73ff;
     box-shadow: 0 0 15px #062600;
 }
+
+
+
 
 </style>

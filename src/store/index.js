@@ -238,6 +238,8 @@ export const useGlobalStore = defineStore('global', {
                     })
 
                     this.bets.sort((a, b) => b.bet_id - a.bet_id)
+
+                    this.loadBalances()
                 }
             }).catch(error => {
                 console.log(error)
