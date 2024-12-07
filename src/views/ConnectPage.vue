@@ -87,12 +87,11 @@ img
 {
     font-size: 10px;
 
-    margin-top: 12px;
     margin-top: auto;
+    margin-bottom: 12px;
 
     text-align: center;
 
     opacity: .5;
 }
-
 </style>
