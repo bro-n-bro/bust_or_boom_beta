@@ -246,7 +246,7 @@ export const useGlobalStore = defineStore('global', {
 
 
         deleteBet(bet_id) {
-            this.bets = this.bets.filter(bet => bet.id !== bet_id)
+            this.bets = this.bets.filter(bet => bet.bet_id !== bet_id)
         },
 
 
