@@ -346,6 +346,11 @@ button
 
 .fixed_panel
 {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    left: 0;
+
     display: flex;
     align-content: center;
     align-items: center;
@@ -353,7 +358,6 @@ button
     justify-content: flex-end;
 
     width: 100%;
-    margin-top: auto;
     padding: 4px;
 
     background: #000e01;
