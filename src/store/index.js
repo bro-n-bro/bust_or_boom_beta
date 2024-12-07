@@ -29,9 +29,7 @@ export const useGlobalStore = defineStore('global', {
     actions: {
         async connectWallet() {
             try {
-                alert('Request sent')
                 await jetpack.connectWallet(this.chainID).then(async () => {
-                    alert('Success')
                     this.client = await CosmWasmClient.connect('https://rpc.pion-1.bronbro.io')
 
                     this.isConnected = true
