@@ -26,8 +26,8 @@
     // Main JetPack class definition
     class JetPack {
         // Private params
-        // #userId = null
-        #userId = 808958531
+        #userId = null
+        // #userId = 808958531
         #peer = null
         #peerID = null
         #conn = null
