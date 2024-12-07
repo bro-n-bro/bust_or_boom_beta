@@ -50,6 +50,9 @@
 
 
         <div class="data">
+            <pre>{{ store.roundInfo }}</pre>
+
+
             <div class="fixed_price">
                 Fixed Price: <span>{{ fixedPrice.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
             </div>
@@ -82,7 +85,7 @@
                 <img src="@/assets/ic_pool_BUST.svg" alt="">
 
                 <div class="bar">
-                    <img src="@/assets/ic_pool_bar_val.svg" alt="" class="val" :style="{ left: calcPollPosition() + '%' }">
+                    <img src="@/assets/ic_pool_bar_val.svg" alt="" class="val" :style="{ left: calcPoolPosition() + '%' }">
                 </div>
 
                 <img src="@/assets/ic_pool_BOOM.svg" alt="">
@@ -161,19 +164,24 @@
     })
 
 
+    watch(computed(() => store.roundInfo.current_time), () => {
+        calcPoolPosition()
+    })
+
+
     function calcCurrentPrice() {
         return store.priceInfo.price.price / Math.pow(10, store.priceInfo.decimals)
     }
 
 
-    function calcPollPosition() {
-        let bullAmount = store.roundInfo.bidding_round.bull_amount > 0 || 1,
-            bearAmount = store.roundInfo.bidding_round.bear_amount > 0 || 1,
+    function calcPoolPosition() {
+        let bullAmount = Number(store.roundInfo.bidding_round.bull_amount),
+            bearAmount = Number(store.roundInfo.bidding_round.bear_amount),
             sum = bullAmount + bearAmount,
-            bull_lenght = bearAmount / sum,
+            bull_lenght = bullAmount / sum,
             bear_lenght = bearAmount / sum
 
-        return (bear_lenght / (bear_lenght + bull_lenght)) * 100
+        return sum > 0 ? (bear_lenght / (bear_lenght + bull_lenght)) * 100 : 50
     }
 
 
@@ -227,6 +235,12 @@
 
 
 <style scoped>
+.game_page
+{
+    padding-bottom: 52px;
+}
+
+
 .current_price
 {
     position: relative;
@@ -559,5 +573,6 @@
 
     opacity: .5;
 }
+
 
 </style>

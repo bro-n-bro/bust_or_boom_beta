@@ -105,7 +105,7 @@
                         </div>
 
                         <div class="prize">
-                            <span v-if="bet.finished_round.winner === bet.type">{{ bet.prize }} BetCoin</span>
+                            <span v-if="bet.finished_round.winner === bet.type">{{ bet.prize.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }} BetCoin</span>
                             <span v-else>-{{ bet.amount }} BetCoin</span>
                         </div>
                     </div>
@@ -215,6 +215,12 @@
 
 
 <style scoped>
+.my_bets_page
+{
+    padding-bottom: 52px;
+}
+
+
 .filter
 {
     display: flex;
