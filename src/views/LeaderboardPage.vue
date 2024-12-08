@@ -8,7 +8,7 @@
 
                 <div class="name">{{ item.display_name }}</div>
 
-                <div class="xp">{{ (item.experience / Math.pow(10, 3)).toFixed(0) }}</div>
+                <div class="xp">{{ (item.experience / Math.pow(10, 3)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) }}</div>
             </div>
         </div>
 
@@ -18,7 +18,7 @@
 
                 <div class="name">{{ currentUser.display_name }}</div>
 
-                <div class="xp">{{ (currentUser.experience / Math.pow(10, 3)).toFixed(0) }}</div>
+                <div class="xp">{{ (currentUser.experience / Math.pow(10, 3)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) }}</div>
             </div>
         </div>
     </section>

@@ -151,18 +151,28 @@
 
 
     function calcBustPrize() {
-        let bullAmount = store.roundInfo.bidding_round.bull_amount > 0 ? store.roundInfo.bidding_round.bull_amount : 1,
-            bearAmount = store.roundInfo.bidding_round.bear_amount > 0 ? store.roundInfo.bidding_round.bear_amount : 1
+        let bullAmount = Number(store.roundInfo.bidding_round.bull_amount) / Math.pow(10, store.exponent),
+            bearAmount = Number(store.roundInfo.bidding_round.bear_amount) / Math.pow(10, store.exponent),
+            result = 0
 
-        return betAmount.value / bullAmount * bearAmount * 0.99
+        if (bullAmount > 0) {
+            result = Number(betAmount.value) / (bearAmount + Number(betAmount.value)) * bullAmount * 0.99
+        }
+
+        return result
     }
 
 
     function calcBoomPrize() {
-        let bullAmount = store.roundInfo.bidding_round.bull_amount > 0 ? store.roundInfo.bidding_round.bull_amount : 1,
-            bearAmount = store.roundInfo.bidding_round.bear_amount > 0 ? store.roundInfo.bidding_round.bear_amount : 1
+        let bullAmount = Number(store.roundInfo.bidding_round.bull_amount) / Math.pow(10, store.exponent),
+            bearAmount = Number(store.roundInfo.bidding_round.bear_amount) / Math.pow(10, store.exponent),
+            result = 0
 
-        return betAmount.value / bearAmount * bullAmount * 0.99
+        if (bearAmount > 0) {
+            result = Number(betAmount.value) / (bullAmount + Number(betAmount.value)) * bearAmount * 0.99
+        }
+
+        return result
     }
 
 

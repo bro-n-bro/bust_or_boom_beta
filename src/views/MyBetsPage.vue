@@ -2,13 +2,13 @@
     <TopPanel />
 
     <section class="my_bets_page">
-        <!-- <div class="filter">
-            <button class="btn" @click.prevent="setFilter('live')">Live</button>
+        <div class="filter">
+            <button class="btn" @click.prevent="setFilter('live')" :class="{ active: filter === 'live' }">Live</button>
 
-            <button class="btn" @click.prevent="setFilter('won')">Won</button>
+            <button class="btn" @click.prevent="setFilter('won')" :class="{ active: filter === 'won' }">Won</button>
 
-            <button class="btn" @click.prevent="setFilter('lose')">Lose</button>
-        </div> -->
+            <button class="btn" @click.prevent="setFilter('lose')" :class="{ active: filter === 'lose' }">Lose</button>
+        </div>
 
         <div class="list" v-if="store.bets.length && !loading">
             <div class="bet" v-for="(bet, index) in store.bets" :key="index">
@@ -114,6 +114,7 @@
 
     const store = useGlobalStore(),
         isRewards = ref(0),
+        filter = ref(null),
         loading = ref(true)
 
 
@@ -141,6 +142,13 @@
 
         loading.value = false
     })
+
+
+    function setFilter(newValue) {
+        filter.value === newValue
+            ? filter.value = null
+            : filter.value = newValue
+    }
 
 
     function deleteBet(bet_id) {
@@ -195,7 +203,7 @@
     justify-content: flex-start;
 
     width: calc(100% - 20px);
-    margin: 10px;
+    margin: 0 10px 10px;
 
     border: 1px solid #252849;
     border-radius: 6px;
@@ -209,7 +217,7 @@
     font-weight: 500;
 
     width: 100%;
-    height: 22px;
+    height: 24px;
 
     transition: .2s linear;
 }
