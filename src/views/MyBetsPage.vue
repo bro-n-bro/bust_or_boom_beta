@@ -3,6 +3,8 @@
 
     <section class="my_bets_page">
         <div class="filter">
+            <button class="btn" @click.prevent="setFilter('*')" :class="{ active: filter === '*' }">All</button>
+
             <button class="btn" @click.prevent="setFilter('live')" :class="{ active: filter === 'live' }">Live</button>
 
             <button class="btn" @click.prevent="setFilter('won')" :class="{ active: filter === 'won' }">Won</button>
@@ -114,7 +116,7 @@
 
     const store = useGlobalStore(),
         isRewards = ref(0),
-        filter = ref(null),
+        filter = ref('*'),
         filterResult = ref([]),
         loading = ref(true)
 
@@ -150,11 +152,9 @@
 
 
     function setFilter(newValue) {
-        filter.value === newValue
-            ? filter.value = null
-            : filter.value = newValue
+        filter.value = newValue
 
-        if (filter.value === null) {
+        if (filter.value === '*') {
             filterResult.value = store.bets
         }
 
@@ -163,11 +163,11 @@
         }
 
         if (filter.value === 'won') {
-            filterResult.value = store.bets.filter(bet => bet.finished_round.winner === bet.type)
+            filterResult.value = store.bets.filter(bet => bet.finished_round && bet.finished_round.winner === bet.type)
         }
 
         if (filter.value === 'lose') {
-            filterResult.value = store.bets.filter(bet => bet.finished_round.winner !== bet.type)
+            filterResult.value = store.bets.filter(bet => bet.finished_round && bet.finished_round.winner !== bet.type)
         }
     }
 
