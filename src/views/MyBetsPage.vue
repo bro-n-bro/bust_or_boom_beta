@@ -42,7 +42,7 @@
                         <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
                         <img src="@/assets/live_bet_img.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
 
-                        <img src="@/assets/live_bet_img.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img3.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
                         <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
                     </div>
 
