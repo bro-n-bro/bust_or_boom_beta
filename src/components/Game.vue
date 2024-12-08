@@ -421,6 +421,7 @@
 .pool .bar .bust_tokens span
 {
     position: absolute;
+    z-index: 3;
     top: 0;
     left: 0;
 
@@ -610,5 +611,4 @@
 
     opacity: .6;
 }
-
 </style>

@@ -10,8 +10,8 @@
             <button class="btn" @click.prevent="setFilter('lose')" :class="{ active: filter === 'lose' }">Lose</button>
         </div>
 
-        <div class="list" v-if="store.bets.length && !loading">
-            <div class="bet" v-for="(bet, index) in store.bets" :key="index">
+        <div class="list" v-if="filterResult.length && !loading">
+            <div class="bet" v-for="(bet, index) in filterResult" :key="index">
                 <div class="live" v-if="!bet.finished_round">
                     <div class="head">
                         <div class="fixed_price">
@@ -115,11 +115,14 @@
     const store = useGlobalStore(),
         isRewards = ref(0),
         filter = ref(null),
+        filterResult = ref([]),
         loading = ref(true)
 
 
     onBeforeMount(async () => {
         store.bets.forEach(async bet => bet.finished_round = await store.getFinishedRound(bet.roundInfo.bidding_round.id))
+
+        filterResult.value = store.bets
 
         isRewards.value = parseInt((await store.myRewards()).pending_reward_total)
 
@@ -138,6 +141,8 @@
             bet.finished_round = await store.getFinishedRound(bet.roundInfo.bidding_round.id)
         })
 
+        filterResult.value = store.bets
+
         isRewards.value = parseInt((await store.myRewards()).pending_reward_total)
 
         loading.value = false
@@ -148,6 +153,22 @@
         filter.value === newValue
             ? filter.value = null
             : filter.value = newValue
+
+        if (filter.value === null) {
+            filterResult.value = store.bets
+        }
+
+        if (filter.value === 'live') {
+            filterResult.value = store.bets.filter(bet => !bet.finished_round)
+        }
+
+        if (filter.value === 'won') {
+            filterResult.value = store.bets.filter(bet => bet.finished_round.winner === bet.type)
+        }
+
+        if (filter.value === 'lose') {
+            filterResult.value = store.bets.filter(bet => bet.finished_round.winner !== bet.type)
+        }
     }
 
 
