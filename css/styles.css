@@ -231,7 +231,7 @@ button
     justify-content: space-between;
 
     margin-bottom: 6px;
-    padding: 6px 10px;
+    padding: 11px 10px;
 
     border-radius: 0 0 10px 10px;
     background: #001802;
@@ -257,7 +257,7 @@ button
     padding: 3px;
 
     border-radius: 50%;
-    background: #000;
+    background: #fff;
 }
 
 
@@ -326,7 +326,7 @@ button
     height: 24px;
 
     border-radius: 50%;
-    background: #d9d9d9;
+    background: #000;
 }
 
 
