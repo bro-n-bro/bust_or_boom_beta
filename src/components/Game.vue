@@ -2,6 +2,8 @@
     <TopPanel />
 
     <section class="game_page">
+        <Loader v-if="isProcess" />
+
         <div class="current_price">
             <img src="@/assets/current_price_img.png" alt="">
 
@@ -93,6 +95,7 @@
     import { useGlobalStore } from '@/store'
     import { useRouter } from 'vue-router'
 
+    import Loader from '@/components/Loader.vue'
     import TopPanel from '@/components/TopPanel.vue'
     import BottomPanel from '@/components/BottomPanel.vue'
 
@@ -102,7 +105,8 @@
         betAmount = ref(0),
         priceLength = ref(0),
         fixedPrice = ref(0),
-        timerTime = ref(0)
+        timerTime = ref(0),
+        isProcess = ref(false)
 
 
     onBeforeMount(() => {
@@ -184,6 +188,8 @@
 
 
     async function createBustBet(prize) {
+        isProcess.value = true
+
         await store.createBet({
             amount: betAmount.value,
             prize: prize,
@@ -196,6 +202,8 @@
 
 
     async function createBoomBet(prize) {
+        isProcess.value = true
+
         await store.createBet({
             amount: betAmount.value,
             prize: prize,
@@ -611,4 +619,5 @@
 
     opacity: .6;
 }
+
 </style>
