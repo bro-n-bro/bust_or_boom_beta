@@ -187,7 +187,6 @@
         await store.createBet({
             amount: betAmount.value,
             prize: prize,
-            priceLength: priceLength.value,
             round_id: store.roundInfo.bidding_round.id,
             type: 'bear'
         })
@@ -200,7 +199,6 @@
         await store.createBet({
             amount: betAmount.value,
             prize: prize,
-            priceLength: priceLength.value,
             round_id: store.roundInfo.bidding_round.id,
             type: 'bull'
         })

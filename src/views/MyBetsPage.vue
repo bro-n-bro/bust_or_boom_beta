@@ -20,7 +20,7 @@
                             <div class="label">Round Price</div>
 
                             <div class="val">
-                                {{ calcFixedPrice(bet).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                                {{ calcFixedPrice(bet.roundInfo.live_round.open_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
                             </div>
                         </div>
 
@@ -30,8 +30,8 @@
                             <div class="label">Live Price</div>
 
                             <div class="val" :class="{
-                                green: calcFixedPrice(bet) <= calcCurrentPrice(),
-                                red: calcFixedPrice(bet) > calcCurrentPrice()
+                                green: calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice(),
+                                red: calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()
                             }">
                                 {{ calcCurrentPrice().toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
                             </div>
@@ -39,8 +39,8 @@
                     </div>
 
                     <div class="image">
-                        <img src="@/assets/live_bet_img.png" alt="" v-if="calcFixedPrice(bet) > calcCurrentPrice()">
-                        <img src="@/assets/live_bet_img2.png" alt="" v-if="calcFixedPrice(bet) <= calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img.png" alt="" v-if="calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img2.png" alt="" v-if="calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
                     </div>
 
                     <div class="bottom">
@@ -77,7 +77,7 @@
 
                     <div>
                         <div class="prices">
-                            <span>{{ calcFixedPrice(bet).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                            <span>{{ calcFixedPrice(bet.roundInfo.live_round.open_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
 
                             Vs.
 
@@ -183,8 +183,8 @@
     }
 
 
-    function calcFixedPrice(bet) {
-        return Number(String(bet.roundInfo.live_round.open_price).slice(0, bet.priceLength || 11)) / Math.pow(10, store.priceInfo.decimals)
+    function calcFixedPrice(price) {
+        return Number(String(price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
     }
 
 
@@ -257,7 +257,7 @@
     display: flex;
     flex-direction: column;
 
-    padding: 0 10px;
+    padding: 0 10px 82px;
 
     gap: 10px;
 }

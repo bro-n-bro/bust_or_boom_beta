@@ -146,7 +146,12 @@ export const useGlobalStore = defineStore('global', {
             try {
                 await fetch('https://lcd.pion-1.bronbro.io/slinky/oracle/v1/get_price?currency_pair.Base=ATOM&currency_pair.Quote=USD')
                     .then(response => response.json())
-                    .then(data => this.priceInfo = data)
+                    .then(data => {
+                        data.price.price = data.price.price.padEnd(20, '0')
+                        data.decimals = 18
+
+                        this.priceInfo = data
+                    })
             } catch (error) {
                 console.error(error)
             }
@@ -184,7 +189,7 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
-        async createBet({ amount, prize, priceLength, round_id, type }) {
+        async createBet({ amount, prize, round_id, type }) {
             let msg = {}
 
             if (type === 'bear') {
@@ -226,7 +231,6 @@ export const useGlobalStore = defineStore('global', {
                         bet_id: Date.now(),
                         type: type,
                         amount: amount,
-                        priceLength: priceLength,
                         prize: prize,
                         round_id: round_id,
                         roundInfo: this.roundInfo,
