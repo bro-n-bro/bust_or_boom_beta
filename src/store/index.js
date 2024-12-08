@@ -184,7 +184,7 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
-        async createBet({ amount, prize, round_id, type }) {
+        async createBet({ amount, prize, priceLength, round_id, type }) {
             let msg = {}
 
             if (type === 'bear') {
@@ -226,6 +226,7 @@ export const useGlobalStore = defineStore('global', {
                         bet_id: Date.now(),
                         type: type,
                         amount: amount,
+                        priceLength: priceLength,
                         prize: prize,
                         round_id: round_id,
                         roundInfo: this.roundInfo,
