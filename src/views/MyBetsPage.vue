@@ -39,15 +39,23 @@
                     </div>
 
                     <div class="image">
-                        <img src="@/assets/live_bet_img.png" alt="" v-if="calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
-                        <img src="@/assets/live_bet_img2.png" alt="" v-if="calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
+
+                        <img src="@/assets/live_bet_img.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
                     </div>
 
                     <div class="bottom">
                         <div class="amount">
                             <div class="label">Your Вet:</div>
 
-                            <div class="val">{{ bet.amount }} Boom</div>
+                            <div class="val">
+                                <img src="@/assets/ic_arrow_up.svg" alt="" v-if="bet.type === 'bull'">
+                                <img src="@/assets/ic_arrow_down.svg" alt="" v-if="bet.type === 'bear'">
+
+                                {{ bet.amount }} Boom
+                            </div>
                         </div>
 
                         <div class="timer">
@@ -405,7 +413,24 @@
     font-weight: 700;
     line-height: 100%;
 
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
     color: #fff200;
+
+    gap: 4px;
+}
+
+
+.bet .live .bottom .val img
+{
+    display: block;
+
+    width: 36px;
+    height: 36px;
 }
 
 
@@ -528,7 +553,4 @@
     background: #0f73ff;
     box-shadow: 0 0 15px #062600;
 }
-
-
-
 </style>
