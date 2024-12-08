@@ -3,16 +3,14 @@
         <div class="head">
             <div class="balance">
                 <div class="logo">
-
+                    <img src="@/assets/boom_logo.svg" alt="">
                 </div>
 
                 <div>
-                    <div class="label">BetCoin</div>
+                    <div class="label">Boom</div>
 
                     <div class="val">
                         {{ (store.balance.amount / Math.pow(10, store.exponent)).toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }}
-
-                        {{ store.symbol }}
                     </div>
                 </div>
             </div>
@@ -29,7 +27,7 @@
                 </div>
 
                 <div class="avatar">
-
+                    <img src="@/assets/JetWallet_logo.svg" alt="">
                 </div>
             </div>
         </div>
@@ -38,7 +36,7 @@
         <div class="current_price">
             <img src="@/assets/current_price_img.png" alt="">
 
-            <div class="label">Current Price</div>
+            <div class="label">Live ATOM Price</div>
 
             <div class="val">
                 <img src="@/assets/ic_arrow_up.svg" alt="" v-if="fixedPrice < calcCurrentPrice()">
@@ -48,12 +46,15 @@
             </div>
         </div>
 
+        <!-- <pre>{{ store.roundInfo }}</pre> -->
 
         <div class="data">
-            <!-- <pre>{{ store.roundInfo }}</pre> -->
-
             <div class="fixed_price">
-                Fixed Price: <span>{{ fixedPrice.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                <img src="@/assets/atom_logo.png" alt="">
+
+                Round Price:
+
+                <span>{{ fixedPrice.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
             </div>
 
             <div class="round_timer">
@@ -64,20 +65,6 @@
                 </vue-countdown>
             </div>
 
-            <div class="bet">
-                <div class="val">Bet: <span>{{ betAmount }}</span></div>
-
-                <div class="btns">
-                    <button class="btn" @click.prevent="setBetAmount(1)" :class="{ active: betAmount == 1 }">1 Coin</button>
-
-                    <button class="btn" @click.prevent="setBetAmount(2)" :class="{ active: betAmount == 2 }">2 Coin</button>
-
-                    <button class="btn" @click.prevent="setBetAmount(3)" :class="{ active: betAmount == 3 }">3 Coin</button>
-                </div>
-            </div>
-
-            <!-- <pre>{{ store.roundInfo }}</pre> -->
-
             <div class="pool">
                 <div class="label">Pool:</div>
 
@@ -85,9 +72,27 @@
 
                 <div class="bar">
                     <img src="@/assets/ic_pool_bar_val.svg" alt="" class="val" :style="{ left: calcPoolPosition() + '%' }">
+
+                    <div class="bust_tokens" :style="{ width: calcPoolPosition() + '%' }">
+                        <span>{{ (store.roundInfo.bidding_round.bear_amount / Math.pow(10, store.exponent)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }).replace(',', '.') }}</span>
+                    </div>
+
+                    <div class="boom_tokens" :style="{ width: 'calc(100% - '+ calcPoolPosition() +'%)' }">
+                        <span>{{ (store.roundInfo.bidding_round.bull_amount / Math.pow(10, store.exponent)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }).replace(',', '.') }}</span>
+                    </div>
                 </div>
 
                 <img src="@/assets/ic_pool_BOOM.svg" alt="">
+            </div>
+        </div>
+
+        <div class="data">
+            <div class="bet">
+                <button class="btn" @click.prevent="setBetAmount(1)" :class="{ active: betAmount == 1 }">1 Boom</button>
+
+                <button class="btn" @click.prevent="setBetAmount(2)" :class="{ active: betAmount == 2 }">2 Boom</button>
+
+                <button class="btn" @click.prevent="setBetAmount(3)" :class="{ active: betAmount == 3 }">3 Boom</button>
             </div>
 
             <div class="choice">
@@ -97,14 +102,14 @@
                     <img src="@/assets/ic_BUST.svg" alt="">
                     <span>BUST</span>
 
-                    <span class="prize">Prize: {{ calcBustPrize().toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }} Coins</span>
+                    <span class="prize">Prize: {{ calcBustPrize().toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }} Boom</span>
                 </button>
 
                 <button class="boom btn" @click="createBoomBet(calcBoomPrize())" :class="{ disabled: isBetInRound() }">
                     <span>BOOM</span>
                     <img src="@/assets/ic_BOOM.svg" alt="">
 
-                    <span class="prize">Prize: {{ calcBoomPrize().toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }} Coins</span>
+                    <span class="prize">Prize: {{ calcBoomPrize().toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }} Boom</span>
                 </button>
             </div>
         </div>
@@ -143,23 +148,28 @@
 
     const store = useGlobalStore(),
         betAmount = ref(0),
+        priceLength = ref(0),
         fixedPrice = ref(0),
         timerTime = ref(0)
 
 
     onBeforeMount(() => {
+        priceLength.value = store.priceInfo.price.price.length
+
         betAmount.value = localStorage.getItem('betAmount') || 1
 
-        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
+        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, priceLength.value)) / Math.pow(10, store.priceInfo.decimals)
 
         timerTime.value = (Number(store.roundInfo.bidding_round.open_time) / 1e6 - Number(store.roundInfo.current_time) / 1e6)
     })
 
 
     watch(computed(() => store.roundInfo.bidding_round.id), () => {
+        priceLength.value = store.priceInfo.price.price.length
+
         timerTime.value = (Number(store.roundInfo.bidding_round.open_time) / 1e6 - Number(store.roundInfo.current_time) / 1e6)
 
-        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
+        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, priceLength.value)) / Math.pow(10, store.priceInfo.decimals)
     })
 
 
@@ -297,6 +307,7 @@
 }
 
 
+
 .data
 {
     display: flex;
@@ -314,13 +325,8 @@
 }
 
 
-.data .fixed_price
-{
-    font-weight: 500;
-}
 
-
-.data .fixed_price
+.fixed_price
 {
     font-weight: 500;
 
@@ -334,7 +340,18 @@
 }
 
 
-.data .fixed_price span
+.fixed_price img
+{
+    display: block;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+}
+
+
+.fixed_price span
 {
     font-size: 20px;
     font-weight: 900;
@@ -343,7 +360,7 @@
 }
 
 
-.data .round_timer
+.round_timer
 {
     display: flex;
     align-content: center;
@@ -355,73 +372,12 @@
 }
 
 
-.data .round_timer span
+.round_timer span
 {
     font-size: 20px;
     font-weight: 900;
 
     color: #fff200;
-}
-
-
-
-.bet
-{
-    width: 100%;
-    margin-top: 6px;
-}
-
-
-.bet .val
-{
-    font-size: 20px;
-    font-weight: 600;
-
-    width: 100%;
-}
-
-
-.bet .val span
-{
-    font-weight: 900;
-
-    color: #fff200;
-}
-
-
-.bet .btns
-{
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-
-    margin-top: 6px;
-
-    gap: 4px;
-}
-
-
-.bet .btn
-{
-    font-size: 20px;
-    font-weight: 900;
-
-    width: 100%;
-    height: 38px;
-
-    transition: .2s linear;
-
-    border-radius: 6px;
-    background: #252849;
-}
-
-
-.btn.active
-{
-    color: #252849;
-    background: #fff;
 }
 
 
@@ -435,7 +391,7 @@
     justify-content: space-between;
 
     width: 100%;
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 
@@ -460,11 +416,86 @@
 {
     position: relative;
 
-    width: calc(100% - 66px);
-    height: 14px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
-    border-radius: 10px;
-    background: linear-gradient(90deg, #b30404 0%, #c83c00 25%, #ff6b00 53%, #ffc700 77%, #61ff00 100%);
+    width: calc(100% - 70px);
+    height: 17px;
+
+    border-radius: 3px;
+    box-shadow: 0 0 0 2px #000e01;
+}
+
+
+.pool .bar .bust_tokens
+{
+    font-size: 14px;
+    font-weight: 900;
+
+    position: relative;
+
+    height: 17px;
+
+    transition: width .2s linear;
+    white-space: nowrap;
+
+    border: 1px solid #f80000;
+    border-radius: 3px 0 0 3px;
+    background: linear-gradient(135deg,  rgba(255,35,35,1) 0%,rgba(248,0,0,1) 100%);
+}
+
+
+.pool .bar .bust_tokens span
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    height: 100%;
+    padding: 0 5px;
+}
+
+
+.pool .bar .boom_tokens
+{
+    font-size: 14px;
+    font-weight: 900;
+
+    position: relative;
+
+    height: 17px;
+
+    transition: width .2s linear;
+    white-space: nowrap;
+
+    border: 1px solid #06b000;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(135deg,  rgba(58,219,0,1) 0%,rgba(6,176,0,1) 100%);
+}
+
+.pool .bar .boom_tokens span
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    height: 100%;
+    padding: 0 5px;
 }
 
 
@@ -472,17 +503,58 @@
 {
     position: absolute;
     z-index: 3;
-    top: -3px;
+    top: -4px;
     left: 50%;
 
     display: block;
 
-    width: 12px;
-    height: 14px;
-    margin-left: -6px;
+    width: 20px;
+    height: 25px;
+    margin-left: -4px;
 
-    transition: transform .2s linear;
+    transition: left .2s linear;
 }
+
+
+
+.bet
+{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+
+    width: 100%;
+    margin-bottom: 8px;
+
+    gap: 4px;
+}
+
+
+.bet .btn
+{
+    font-size: 20px;
+    font-weight: 900;
+
+    display: block;
+
+    width: 100%;
+    height: 38px;
+
+    transition: .2s linear;
+
+    border-radius: 6px;
+    background: #252849;
+}
+
+
+.btn.active
+{
+    color: #252849;
+    background: #fff;
+}
+
 
 
 .choice
@@ -492,8 +564,6 @@
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between;
-
-    margin-top: 8px;
 
     gap: 8px;
 }
@@ -523,10 +593,9 @@
     width: calc(50% - 4px);
     height: 54px;
 
-    border: 3px solid transparent;
     border-radius: 6px;
 
-    gap: 2px;
+    gap: 0 2px;
 }
 
 
@@ -537,8 +606,8 @@
 
     display: block;
 
-    width: 13px;
-    height: 14px;
+    width: 14px;
+    height: 15px;
 }
 
 
@@ -561,7 +630,6 @@
 
 .choice .btn.boom
 {
-    border-color: #c1ffbf;
     background: #1a9a00;
 }
 
@@ -570,8 +638,19 @@
 {
     pointer-events: none;
 
-    opacity: .5;
+    opacity: .6;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 </style>

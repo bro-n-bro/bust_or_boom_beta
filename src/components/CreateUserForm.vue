@@ -1,26 +1,28 @@
 <template>
     <div class="create_account">
-        <div class="title">Create account</div>
+        <div class="title">Registration</div>
 
         <form @submit.prevent="onSubmit()" :class="{ disabled: isProcess }">
             <div class="line">
-                <div class="label">Username</div>
+                <div class="label">Enter your nickname:</div>
 
                 <div class="field">
-                    <input type="text" class="input" placeholder="User name" v-model="username">
+                    <input type="text" class="input" v-model="username" placeholder="Enter your nickname:"
+                        @input="validateUsername()">
                 </div>
             </div>
 
-            <div class="line">
-                <div class="label">Display name</div>
+            <div class="line desc">
+                Hello!<br>
+                Enter your nickname. You will receive 100 Boom Coins as a new player. Good luck!
+            </div>
 
-                <div class="field">
-                    <input type="text" class="input" placeholder="Display name" v-model="display_name">
-                </div>
+            <div class="line img">
+                <img src="@/assets/register_img.png" alt="">
             </div>
 
             <div class="submit">
-                <button type="submit" class="submit_btn">Create</button>
+                <button type="submit" class="submit_btn" :class="{ disabled: !isFormValid }">Register</button>
             </div>
         </form>
     </div>
@@ -30,19 +32,39 @@
 <script setup>
     import { ref, } from 'vue'
     import { useGlobalStore } from '@/store'
+    import { useRouter } from 'vue-router'
+
 
     const store = useGlobalStore(),
+        router = useRouter(),
         username = ref(''),
-        display_name = ref(''),
+        isFormValid = ref(false),
         isProcess = ref(false)
+
+
+    function validateUsername() {
+        let error = true
+
+        if (!username.value.trim().length) {
+            error = false
+        }
+
+        if (username.value.trim().includes(' ')) {
+            error = false
+        }
+
+        isFormValid.value = error
+    }
 
 
     async function onSubmit() {
         isProcess.value = true
 
+        await store.faucet()
+
         let result = await store.createUserAccount({
             username: username.value,
-            display_name: display_name.value
+            display_name: username.value
         })
 
         if (!result) {
@@ -62,26 +84,34 @@
 <style scoped>
 .create_account
 {
-    padding: 20px;
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+
+    padding: 10px 10px 20px;
 }
 
 
 .title
 {
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 22px;
+    font-weight: 500;
 
-    margin-bottom: 40px;
-}
-
-
-.line
-{
     margin-bottom: 20px;
+    padding: 0 10px;
 }
 
 
-.disabled
+
+form
+{
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+}
+
+
+form.disabled
 {
     pointer-events: none;
 
@@ -89,42 +119,49 @@
 }
 
 
-.label
+form .line
 {
-    font-weight: 500;
-
-    margin-bottom: 8px;
+    margin-bottom: 17px;
 }
 
 
-.input::-webkit-input-placeholder
+form .label
+{
+    font-size: 14px;
+
+    margin-bottom: 4px;
+    padding: 0 10px;
+}
+
+
+form .input::-webkit-input-placeholder
 {
     color: rgba(255,255,255,.6);
 }
 
-.input:-moz-placeholder
+form .input:-moz-placeholder
 {
     color: rgba(255,255,255,.6);
 }
 
-.input::-moz-placeholder
+form .input::-moz-placeholder
 {
     opacity: 1;
     color: rgba(255,255,255,.6);
 }
 
-.input:-ms-input-placeholder
+form .input:-ms-input-placeholder
 {
     color: rgba(255,255,255,.6);
 }
 
 
-.input,
-.input:focus
+form .input,
+form .input:focus
 {
     font-family: inherit;
     font-size: 16px;
-    line-height: normal;
+    font-weight: 500;
 
     display: block;
 
@@ -133,37 +170,71 @@
     padding: 0 15px;
 
     color: currentColor;
-    border: 1px solid rgba(255,255,255,.3);
-    border-radius: 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
     background: #001802;
 }
 
 
-.input:-webkit-autofill
+form .input:-webkit-autofill
 {
     -webkit-box-shadow: inset 0 0 0 50px #001802 !important;
 }
 
 
-
-.submit
+form .desc
 {
+    padding: 0 10px;
+}
+
+
+form .img
+{
+    margin-top: auto;
+}
+
+
+form .img img
+{
+    display: block;
+
+    width: 224px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+
+form .submit
+{
+    margin-top: auto;
     padding-top: 20px;
 }
 
 
-.submit_btn
+form .submit_btn
 {
-    font-size: 20px;
-    font-weight: 900;
+    font-size: 18px;
+    font-weight: 500;
 
     display: block;
 
     width: 100%;
     height: 52px;
 
-    color: #252849;
-    border-radius: 6px;
-    background: #fff;
+    transition: opacity .2s linear;
+
+    color: #fff;
+    border-radius: 12px;
+    background: #950fff;
 }
+
+
+form .submit_btn.disabled
+{
+    pointer-events: none;
+
+    opacity: .6;
+}
+
+
 </style>

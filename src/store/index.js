@@ -134,9 +134,10 @@ export const useGlobalStore = defineStore('global', {
             this.websocket.onmessage = async msg => {
                 this.ChainBlockInfo = JSON.parse(msg.data)
 
-                this.getRoundInfo()
-
-                this.getPriceInfo()
+                await Promise.all([
+                    this.getPriceInfo(),
+                    this.getRoundInfo(),
+                ])
             }
         },
 
@@ -177,8 +178,6 @@ export const useGlobalStore = defineStore('global', {
                         address: jetpack.getAddress()
                     })
                 })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
             } catch (error) {
                 console.error(error)
             }

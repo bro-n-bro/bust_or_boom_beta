@@ -3,16 +3,14 @@
         <div class="head">
             <div class="balance">
                 <div class="logo">
-
+                    <img src="@/assets/boom_logo.svg" alt="">
                 </div>
 
                 <div>
-                    <div class="label">BetCoin</div>
+                    <div class="label">Boom</div>
 
                     <div class="val">
                         {{ (store.balance.amount / Math.pow(10, store.exponent)).toLocaleString('ru-RU', { maximumFractionDigits: 2 }).replace(',', '.') }}
-
-                        {{ store.symbol }}
                     </div>
                 </div>
             </div>
@@ -29,7 +27,7 @@
                 </div>
 
                 <div class="avatar">
-
+                    <img src="@/assets/JetWallet_logo.svg" alt="">
                 </div>
             </div>
         </div>
