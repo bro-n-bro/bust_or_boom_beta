@@ -17,6 +17,7 @@
     import { useGlobalStore } from '@/store'
     import { useRouter } from 'vue-router'
 
+
     const store = useGlobalStore(),
         router = useRouter(),
         version = process.env.APP_VERSION || 'unknown'
@@ -26,30 +27,18 @@
         await store.connectWallet().then(async () => {
             await store.checkUserAccount()
 
-            // Redirect
             // router.push({ path: '/register' })
 
             if (store.isRegistered !== null && store.isRegistered === false) {
-                // Redirect
                 router.push({ path: '/register' })
             }
 
             if (store.isRegistered) {
-                // Redirect
                 router.push({ path: '/main' })
             }
 		}).catch(error => {
 			console.log(error)
 		})
-
-        // store.connectWallet().then(() => {
-        //     // Redirect
-        //     router.push({ path: '/main' })
-		// }).catch(error => {
-        //     isFaucetProcess.value = false
-
-		// 	console.log(error)
-		// })
     }
 </script>
 

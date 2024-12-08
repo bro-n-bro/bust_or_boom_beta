@@ -30,13 +30,14 @@
 
 
 <script setup>
-    import { ref, } from 'vue'
+    import { ref, inject } from 'vue'
     import { useGlobalStore } from '@/store'
     import { useRouter } from 'vue-router'
 
 
     const store = useGlobalStore(),
         router = useRouter(),
+        emitter = inject('emitter'),
         username = ref(''),
         isFormValid = ref(false),
         isProcess = ref(false)
@@ -73,7 +74,8 @@
             await store.checkUserAccount()
 
             if (store.isRegistered) {
-                // Redirect
+                emitter.emit('show_register_success_modal')
+
                 router.push({ path: '/main' })
             }
         }
