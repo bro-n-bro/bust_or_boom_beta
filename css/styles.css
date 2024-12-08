@@ -394,3 +394,153 @@ button
 {
     color: #2eff26;
 }
+
+
+
+
+
+
+
+/*-----------
+    Modal
+-----------*/
+.modal_overlay
+{
+    position: fixed;
+    z-index: 90;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, .60);
+
+            backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+
+
+.modal
+{
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    min-height: -moz-available;
+    min-height: -webkit-fill-available;
+    min-height:         fill-available;
+
+    pointer-events: none;
+}
+
+
+.modal_content
+{
+    position: absolute;
+    z-index: 3;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    overflow: auto;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+
+
+.modal_content .close_btn
+{
+    position: absolute;
+    z-index: 9;
+    top: 10px;
+    right: 10px;
+
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+}
+
+
+.modal_content .close_btn svg
+{
+    display: block;
+
+    width: 24px;
+    height: 24px;
+}
+
+
+.modal_content .data
+{
+    position: relative;
+
+    width: 100%;
+    padding: 20px;
+
+    pointer-events: auto;
+
+    border-radius: 20px;
+    background: #003504;
+}
+
+
+.modal_content .title
+{
+    font-size: 24px;
+    font-weight: 600;
+
+    margin-bottom: 24px;
+
+    text-align: center;
+}
+
+
+.modal_content .desc
+{
+    font-size: 18px;
+
+    margin-bottom: 24px;
+
+    text-align: center;
+}
+
+
+.modal_content .img
+{
+    display: block;
+
+    width: 329px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+
+.modal_content .apply_btn
+{
+    font-size: 18px;
+    font-weight: 500;
+
+    display: block;
+
+    width: 100%;
+    height: 52px;
+
+    border-radius: 12px;
+    background: #950fff;
+}
