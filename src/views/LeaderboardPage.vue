@@ -59,7 +59,10 @@
             'neutron1xetg6y5fx9uer4raf4caksc37gshyhj48cwule',
             'neutron1lfypvrrw8h9g7r4lxsrgxmnw2chnreevud9n98',
             'neutron1gpd5jan0ss5shufqu2ape99kyjsfyfx29tdycv',
-            'neutron1pk0gdxaes763c95wsvrvgzknjs6segdswwtjjk'
+            'neutron1pk0gdxaes763c95wsvrvgzknjs6segdswwtjjk',
+            'neutron1g7u7gwxtd5m222vun5v4p7jr0e8wz9m59qdtv6',
+            'neutron1n0lctf0dtcvusgujnck92hgmzqlcjer8x4r5zp',
+            'neutron1p4hc20yrucx4hk4lf68wmuzvsa0rrxkuua7grf'
         ]
 
 
@@ -72,8 +75,10 @@
 
         let currentUserIndex = items.value.findIndex(el => el.address === store.getUserAddress())
 
-        currentUser.value = items.value[currentUserIndex]
-        currentUser.value.position = currentUserIndex + 1
+        if (currentUserIndex !== -1) {
+            currentUser.value = items.value[currentUserIndex]
+            currentUser.value.position = currentUserIndex + 1
+        }
 
         loading.value = false
     })
@@ -90,8 +95,10 @@
 
         let currentUserIndex = items.value.findIndex(el => el.address === store.getUserAddress())
 
-        currentUser.value = items.value[currentUserIndex]
-        currentUser.value.position = currentUserIndex + 1
+        if (currentUserIndex !== -1) {
+            currentUser.value = items.value[currentUserIndex]
+            currentUser.value.position = currentUserIndex + 1
+        }
 
         loading.value = false
     })
