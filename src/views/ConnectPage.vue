@@ -1,14 +1,12 @@
 <template>
-    <div class="main">
-        <img src="@/assets/connect_page_img.png" alt="">
+    <img src="@/assets/connect_page_img.png" alt="">
 
-        <button class="btn" @click.prevent="connectWallet()" v-if="!store.isConnected">Connect Jet Wallet</button>
+    <button class="btn" @click.prevent="connectWallet()" v-if="!store.isConnected">Connect Jet Wallet</button>
 
-        <!-- <button class="btn" @click.prevent="faucet()" v-else :class="{ disabled: isFaucetProcess }">Get tokens</button> -->
+    <!-- <button class="btn" @click.prevent="faucet()" v-else :class="{ disabled: isFaucetProcess }">Get tokens</button> -->
 
-        <div class="version">
-            {{ version }}
-        </div>
+    <div class="version">
+        {{ version }}
     </div>
 </template>
 

@@ -35,6 +35,14 @@ const routes = [
 			accessDenied: ['not_connected']
 		}
 	},
+	{
+		path: '/leaderboard',
+		name: 'LeaderboardPage',
+		component: () => import('../views/LeaderboardPage.vue'),
+		meta: {
+			accessDenied: ['not_connected']
+		}
+	},
 ]
 
 

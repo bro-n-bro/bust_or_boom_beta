@@ -1,5 +1,7 @@
 <template>
-	<router-view />
+	<div class="main">
+		<router-view />
+	</div>
 
 	<RegisterSuccessModal v-if="showRegisterSuccessModal" />
 

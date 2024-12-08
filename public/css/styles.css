@@ -222,15 +222,20 @@ button
 
 
 
-.head
+.top_panel
 {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+
     display: flex;
     align-content: center;
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between;
 
-    margin-bottom: 6px;
+    width: 100%;
     padding: 11px 10px;
 
     border-radius: 0 0 10px 10px;
@@ -238,7 +243,7 @@ button
 }
 
 
-.head .balance
+.top_panel .balance
 {
     display: flex;
     align-content: center;
@@ -250,7 +255,7 @@ button
 }
 
 
-.head .balance .logo
+.top_panel .balance .logo
 {
     width: 38px;
     height: 38px;
@@ -261,7 +266,7 @@ button
 }
 
 
-.head .balance .logo img
+.top_panel .balance .logo img
 {
     display: block;
 
@@ -274,21 +279,21 @@ button
 }
 
 
-.head .balance .label
+.top_panel .balance .label
 {
     font-size: 12px;
     font-weight: 500;
 }
 
 
-.head .balance .val
+.top_panel .balance .val
 {
     font-size: 14px;
     font-weight: 700;
 }
 
 
-.head .user
+.top_panel .user
 {
     display: flex;
     align-content: center;
@@ -307,20 +312,20 @@ button
 }
 
 
-.head .user .name
+.top_panel .user .name
 {
     font-size: 12px;
 }
 
 
-.head .user .address
+.top_panel .user .address
 {
     font-size: 12px;
     font-weight: 100;
 }
 
 
-.head .user .avatar
+.top_panel .user .avatar
 {
     width: 24px;
     height: 24px;
@@ -330,7 +335,7 @@ button
 }
 
 
-.head .user .avatar img
+.top_panel .user .avatar img
 {
     display: block;
 
@@ -344,7 +349,7 @@ button
 
 
 
-.fixed_panel
+.bottom_panel
 {
     position: fixed;
     z-index: 10;
@@ -364,7 +369,7 @@ button
 }
 
 
-.fixed_panel .link
+.bottom_panel .link
 {
     display: flex;
     align-content: center;
@@ -381,7 +386,7 @@ button
 }
 
 
-.fixed_panel .link svg
+.bottom_panel .link svg
 {
     display: block;
 
@@ -390,14 +395,10 @@ button
 }
 
 
-.fixed_panel .link.router-link-active
+.bottom_panel .link.router-link-active
 {
     color: #2eff26;
 }
-
-
-
-
 
 
 

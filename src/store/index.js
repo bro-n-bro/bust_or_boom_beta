@@ -293,5 +293,16 @@ export const useGlobalStore = defineStore('global', {
                 console.log(error)
             })
         },
+
+
+        async getLeaderbpard() {
+            try {
+                return await this.client.queryContractSmart('neutron1edsy5v3lty0j6xd5sg8nzcmnkuwjgu2887xrhyg7s8wxnww39kfqy3cu3k', {
+                    users: {}
+                })
+            } catch (error) {
+                return false
+            }
+        }
     }
 })

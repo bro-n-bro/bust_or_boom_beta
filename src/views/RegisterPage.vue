@@ -1,7 +1,5 @@
 <template>
-    <div class="main">
-        <CreateUserForm />
-    </div>
+    <CreateUserForm />
 </template>
 
 

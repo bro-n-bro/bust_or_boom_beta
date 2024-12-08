@@ -1,7 +1,7 @@
 <template>
-    <div class="my_bets_page">
-        <TopPanel />
+    <TopPanel />
 
+    <section class="my_bets_page">
         <!-- <div class="filter">
             <button class="btn" @click.prevent="setFilter('live')">Live</button>
 
@@ -87,8 +87,8 @@
                         </div>
 
                         <div class="prize">
-                            <span v-if="bet.finished_round.winner === bet.type">{{ bet.prize.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }} BetCoin</span>
-                            <span v-else>-{{ bet.amount }} BetCoin</span>
+                            <span v-if="bet.finished_round.winner === bet.type">{{ bet.prize.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }} Boom</span>
+                            <span v-else>-{{ bet.amount }} Boom</span>
                         </div>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
         <div class="empty" v-else>You have no current bets.</div>
 
         <button class="claim_btn" @click.prevent="claimRewards()" v-if="isRewards">Claim Rewards</button>
-    </div>
+    </section>
 
     <BottomPanel />
 </template>
@@ -181,7 +181,8 @@
 <style scoped>
 .my_bets_page
 {
-    padding-bottom: 52px;
+    padding-top: 72px;
+    padding-bottom: 62px;
 }
 
 
@@ -226,9 +227,9 @@
     display: flex;
     flex-direction: column;
 
-    padding: 0 10px 10px;
+    padding: 0 10px;
 
-    gap: 6px;
+    gap: 10px;
 }
 
 
@@ -497,5 +498,7 @@
     background: #0f73ff;
     box-shadow: 0 0 15px #062600;
 }
+
+
 
 </style>

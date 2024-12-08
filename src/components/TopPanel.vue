@@ -1,5 +1,5 @@
 <template>
-    <div class="head">
+    <div class="top_panel">
         <div class="balance">
             <div class="logo">
                 <img src="@/assets/boom_logo.svg" alt="">

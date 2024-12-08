@@ -1,7 +1,5 @@
 <template>
-    <div class="main">
-        <Game />
-    </div>
+    <Game />
 </template>
 
 

@@ -1,7 +1,7 @@
 <template>
-    <div class="game_page">
-        <TopPanel />
+    <TopPanel />
 
+    <section class="game_page">
         <div class="current_price">
             <img src="@/assets/current_price_img.png" alt="">
 
@@ -82,7 +82,7 @@
                 </button>
             </div>
         </div>
-    </div>
+    </section>
 
     <BottomPanel />
 </template>
@@ -206,7 +206,8 @@
 <style scoped>
 .game_page
 {
-    padding-bottom: 52px;
+    padding-top: 72px;
+    padding-bottom: 62px;
 }
 
 
@@ -215,7 +216,7 @@
     position: relative;
 
     width: calc(100% - 20px);
-    margin: 0 10px 6px;
+    margin: 0 10px 10px;
     padding: 8px;
 
     text-align: right;
@@ -277,7 +278,7 @@
     justify-content: space-between;
 
     width: calc(100% - 20px);
-    margin: 0 10px 6px;
+    margin: 0 10px 10px;
     padding: 10px;
 
     border-radius: 12px;
@@ -599,4 +600,5 @@
 
     opacity: .6;
 }
+
 </style>
