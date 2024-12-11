@@ -53,10 +53,11 @@ export const useGlobalStore = defineStore('global', {
                     }
                 })
 
+                await this.getRoundInfo()
+
                 await Promise.all([
                     this.getPriceInfo(),
-                    this.getRoundInfo(),
-                    this.loadBalances(),
+                    this.loadBalances()
                 ])
 
                 this.connectWebsocket()
@@ -134,10 +135,9 @@ export const useGlobalStore = defineStore('global', {
             this.websocket.onmessage = async msg => {
                 this.ChainBlockInfo = JSON.parse(msg.data)
 
-                await Promise.all([
-                    this.getPriceInfo(),
-                    this.getRoundInfo(),
-                ])
+                await this.getRoundInfo()
+
+                await this.getPriceInfo()
             }
         },
 
@@ -147,8 +147,8 @@ export const useGlobalStore = defineStore('global', {
                 await fetch('https://lcd.pion-1.bronbro.io/slinky/oracle/v1/get_price?currency_pair.Base=ATOM&currency_pair.Quote=USD')
                     .then(response => response.json())
                     .then(data => {
-                        data.price.price = data.price.price.padEnd(20, '0')
-                        data.decimals = 18
+                        data.price.price = data.price.price.padEnd(this.roundInfo?.live_round?.open_price.length, '0')
+                        data.decimals = this.roundInfo?.live_round?.open_price.length - 1
 
                         this.priceInfo = data
                     })
