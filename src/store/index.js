@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
-const jetpack = new JetPack()
+
+const jetpack = new JetPack(true)
 
 
 export const useGlobalStore = defineStore('global', {
@@ -22,7 +23,9 @@ export const useGlobalStore = defineStore('global', {
 
         chainID: 'pion-1',
         exponent: 6,
-        symbol: 'BOOM'
+        symbol: 'BOOM',
+
+        jetpack: jetpack
     }),
 
 

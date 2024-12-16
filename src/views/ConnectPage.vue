@@ -1,6 +1,11 @@
 <template>
     <img src="@/assets/connect_page_img.png" alt="">
 
+    <div class="conn_status">
+        <span v-if="!store.jetpack.isConnected">Disconnect</span>
+        <span v-else class="green">Connected</span>
+    </div>
+
     <button class="btn" @click.prevent="connectWallet()" v-if="!store.isConnected">Connect Jet Wallet</button>
 
     <!-- <button class="btn" @click.prevent="faucet()" v-else :class="{ disabled: isFaucetProcess }">Get tokens</button> -->
@@ -50,6 +55,54 @@ img
     margin-top: -91px;
 
     pointer-events: none;
+}
+
+
+.conn_status
+{
+    margin-bottom: 10px;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, .3);
+}
+
+
+.conn_status span
+{
+    position: relative;
+
+    display: inline-block;
+
+    padding-left: 12px;
+
+    vertical-align: top;
+}
+
+
+.conn_status span:before
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    display: block;
+
+    width: 6px;
+    height: 6px;
+    margin: auto 0;
+
+    content: '';
+
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .3);
+}
+
+
+.conn_status span.green:before
+{
+    background: #06c50e;
 }
 
 

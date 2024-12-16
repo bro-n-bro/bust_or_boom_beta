@@ -16,7 +16,7 @@
 
         <div class="user">
             <div>
-                <div class="name">
+                <div class="name" :class="{ green: store.jetpack.isConnected }">
                     {{ store.user.display_name }}
                 </div>
 
