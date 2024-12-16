@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
-
 const jetpack = new JetPack(true)
 
 
@@ -23,9 +22,7 @@ export const useGlobalStore = defineStore('global', {
 
         chainID: 'pion-1',
         exponent: 6,
-        symbol: 'BOOM',
-
-        jetpack: jetpack
+        symbol: 'BOOM'
     }),
 
 
@@ -45,6 +42,11 @@ export const useGlobalStore = defineStore('global', {
 
         getUserAddress() {
             return jetpack.getAddress()
+        },
+
+
+        isRTCConnected() {
+            return jetpack.isConnected()
         },
 
 

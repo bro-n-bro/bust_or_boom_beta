@@ -2,7 +2,7 @@
     <img src="@/assets/connect_page_img.png" alt="">
 
     <div class="conn_status">
-        <span v-if="!store.jetpack.isConnected">Disconnect</span>
+        <span v-if="!store.isRTCConnected()">Disconnect</span>
         <span v-else class="green">Connected</span>
     </div>
 
