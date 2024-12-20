@@ -2,7 +2,7 @@
     <img src="@/assets/connect_page_img.png" alt="">
 
     <div class="conn_status">
-        <span v-if="!store.isRTCConnected()">Disconnect</span>
+        <span v-if="!store.isRTCConnected">Disconnect</span>
         <span v-else class="green">Connected</span>
     </div>
 
@@ -60,7 +60,8 @@ img
 
 .conn_status
 {
-    margin-bottom: 10px;
+    margin-top: auto;
+    margin-bottom: 16px;
 
     text-align: center;
 
@@ -118,7 +119,7 @@ img
 
     width: calc(100% - 40px);
     height: 52px;
-    margin: auto auto 0;
+    margin: 0 auto;
 
     border-radius: 12px;
     background: #950fff;
@@ -144,5 +145,4 @@ img
 
     opacity: .5;
 }
-
 </style>

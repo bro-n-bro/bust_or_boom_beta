@@ -346,7 +346,7 @@ button
 }
 
 
-.top_panel .user .name:before
+.top_panel .user .name.green:before
 {
     background: #06c50e;
 }

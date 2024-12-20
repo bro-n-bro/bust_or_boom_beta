@@ -7,6 +7,7 @@ const jetpack = new JetPack(true)
 
 export const useGlobalStore = defineStore('global', {
     state: () => ({
+        isRTCConnected: false,
         isConnected: false,
         isRegistered: null,
 
@@ -27,6 +28,25 @@ export const useGlobalStore = defineStore('global', {
 
 
     actions: {
+        // Init
+        init() {
+            // Connect event
+            jetpack.on('connect', () => {
+                this.isRTCConnected = true
+            })
+
+            // Disconnect event
+            jetpack.on('disconnect', () => {
+                this.isRTCConnected = false
+            })
+
+            // Close event
+            jetpack.on('close', () => {
+                this.isRTCConnected = false
+            })
+        },
+
+
         async connectWallet() {
             try {
                 await jetpack.connectWallet(this.chainID).then(async () => {
@@ -42,11 +62,6 @@ export const useGlobalStore = defineStore('global', {
 
         getUserAddress() {
             return jetpack.getAddress()
-        },
-
-
-        isRTCConnected() {
-            return jetpack.isConnected()
         },
 
 

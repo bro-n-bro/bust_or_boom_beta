@@ -16,7 +16,7 @@
 
         <div class="user">
             <div>
-                <div class="name" :class="{ green: store.isRTCConnected() }">
+                <div class="name" :class="{ green: store.isRTCConnected }">
                     {{ store.user.display_name }}
                 </div>
 

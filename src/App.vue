@@ -10,13 +10,21 @@
 
 
 <script setup>
-	import { ref, inject } from 'vue'
+	import { ref, inject, onMounted } from 'vue'
+    import { useGlobalStore } from '@/store'
 
     import RegisterSuccessModal from '@/components/RegisterSuccessModal.vue'
 
 
-	const emitter = inject('emitter'),
+	const store = useGlobalStore(),
+		emitter = inject('emitter'),
 		showRegisterSuccessModal = ref(false)
+
+
+	onMounted(() => {
+		// Init
+		store.init()
+	})
 
 
 	emitter.on('show_register_success_modal', () => {
