@@ -36,7 +36,7 @@
         #jwBalances = {}
         #pubKey = ''
         #isConnected = false
-        #connectionInterval = 500
+        #connectionInterval = 1000
         #callbacks = {}
         #eventListeners = {}
 
@@ -172,7 +172,7 @@
             try {
                 // Open the URL
                 this._openUrl(`https://t.me/${BOT_USERNAME}/${APP_NAME}?startapp=${encodedData}`)
-                // this._openUrl(`http://localhost:8080/auth?tgWebAppStartParam=${encodedData}`)
+                // this._openUrl(`http://localhost:8081/auth?tgWebAppStartParam=${encodedData}`)
 
                 // Connection
                 this._connection()
@@ -219,6 +219,9 @@
 
                         // Call the 'disconnect' event
                         this._emit('disconnect')
+
+                        // Auto connection
+                        this._connection()
                     })
 
                     this.#conn.on('disconnected', () => {
@@ -227,6 +230,9 @@
 
                         // Call the 'disconnect' event
                         this._emit('disconnect')
+
+                        // Auto connection
+                        this._connection()
                     })
                 }
             }, this.#connectionInterval)
