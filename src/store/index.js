@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+// import JetPack from 'jetpack'
 
+
+// Init jetPack
 const jetpack = new JetPack(true)
 
 
@@ -47,11 +50,15 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Connect wallet
         async connectWallet() {
             try {
+                // Connect wallet request
                 await jetpack.connectWallet(this.chainID).then(async () => {
+                    // Create CosmWasmClient
                     this.client = await CosmWasmClient.connect('https://rpc.pion-1.bronbro.io')
 
+                    // Set connected status
                     this.isConnected = true
                 })
             } catch(error) {
@@ -60,36 +67,46 @@ export const useGlobalStore = defineStore('global', {
 		},
 
 
+        // Get user address
         getUserAddress() {
             return jetpack.getAddress()
         },
 
 
+        // Check user account
         async checkUserAccount() {
             try {
+                // Check user account request
                 this.user = await this.client.queryContractSmart('neutron1edsy5v3lty0j6xd5sg8nzcmnkuwjgu2887xrhyg7s8wxnww39kfqy3cu3k', {
                     user_by_address: {
                         address: jetpack.getAddress()
                     }
                 })
 
+                // Get round info
                 await this.getRoundInfo()
 
+                // Wait promise
                 await Promise.all([
                     this.getPriceInfo(),
                     this.loadBalances()
                 ])
 
+                // Set websocket connect
                 this.connectWebsocket()
 
+                // Set registered status
                 this.isRegistered = true
             } catch (error) {
+                // Set registered status
                 this.isRegistered = false
             }
         },
 
 
+        // Create user account
         async createUserAccount({ username, display_name }) {
+            // Create user account request
             return await jetpack.sendTx([{
                 typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
                 value: {
@@ -105,13 +122,16 @@ export const useGlobalStore = defineStore('global', {
                     }))
                 }
             }]).then(async (result) => {
+                // Get error as a result
                 if (result.type === 'error') {
                     console.log(error)
 
                     return false
                 }
 
+                // Get tx as a result
                 if (result.type === 'tx') {
+                    // Check user account
                     await this.checkUserAccount()
 
                     return true
@@ -124,14 +144,19 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Get balances
         async loadBalances() {
+            // Get balances request
             await jetpack.loadBalances().then(() => {
+                // Set balances
                 this.balance = jetpack.getBalances().find(el => el.denom === 'factory/neutron1heydp9f3977kq7c4fecrkra9etdqlu9al954cs/uboom')
             })
         },
 
 
+        // Set websocket connect
         async connectWebsocket() {
+            // Reset connection
             if (this.websocket) {
                 this.websocket.onopen = null
                 this.websocket.onmessage = null
@@ -139,9 +164,12 @@ export const useGlobalStore = defineStore('global', {
                 this.websocket.close()
             }
 
+            // Create connection
             this.websocket = new WebSocket('wss://rpc.pion-1.bronbro.io:443/websocket')
 
+            // Connection open event
             this.websocket.onopen = () => {
+                // Subscribe to new blocks
                 this.websocket.send(JSON.stringify({
                     jsonrpc: '2.0',
                     method: 'subscribe',
@@ -152,24 +180,31 @@ export const useGlobalStore = defineStore('global', {
                 }))
             }
 
+            // Connection message event
             this.websocket.onmessage = async msg => {
+                // Set block info
                 this.ChainBlockInfo = JSON.parse(msg.data)
 
+                // Get round info
                 await this.getRoundInfo()
 
+                // Get price info
                 await this.getPriceInfo()
             }
         },
 
 
+        // Get price info
         async getPriceInfo() {
             try {
+                // Get price info request
                 await fetch('https://lcd.pion-1.bronbro.io/slinky/oracle/v1/get_price?currency_pair.Base=ATOM&currency_pair.Quote=USD')
                     .then(response => response.json())
                     .then(data => {
                         data.price.price = data.price.price.padEnd(this.roundInfo?.live_round?.open_price.length, '0')
                         data.decimals = this.roundInfo?.live_round?.open_price.length - 1
 
+                        // Set price info
                         this.priceInfo = data
                     })
             } catch (error) {
@@ -178,8 +213,10 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Get round info
         async getRoundInfo() {
             try {
+                // Get round info request
                 this.roundInfo = await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
                     status: {}
                 })
@@ -191,8 +228,10 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Faucet
         async faucet() {
             try {
+                // Faucet request
                 await fetch('https://pion.tap.bronbro.io/claim_rewards/', {
                     method: 'POST',
                     headers: {
@@ -209,9 +248,11 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Create bet
         async createBet({ amount, prize, round_id, type }) {
             let msg = {}
 
+            // Bear bet
             if (type === 'bear') {
                 msg = {
                     bet_bear: {
@@ -221,6 +262,7 @@ export const useGlobalStore = defineStore('global', {
                 }
             }
 
+            // Bull bet
             if (type === 'bull') {
                 msg = {
                     bet_bull: {
@@ -230,6 +272,7 @@ export const useGlobalStore = defineStore('global', {
                 }
             }
 
+            // Create bet request
             await jetpack.sendTx([{
                 typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
                 value: {
@@ -242,10 +285,12 @@ export const useGlobalStore = defineStore('global', {
                     }]
                 }
             }]).then((result) => {
+                // Get error as a result
                 if (result.type === 'error') {
                     console.log(error)
                 }
 
+                // Get tx as a result
                 if (result.type === 'tx') {
                     this.bets.push({
                         bet_id: Date.now(),
@@ -257,8 +302,10 @@ export const useGlobalStore = defineStore('global', {
                         finished_round: null
                     })
 
+                    // Sort bets
                     this.bets.sort((a, b) => b.bet_id - a.bet_id)
 
+                    // Update balances
                     this.loadBalances()
                 }
             }).catch(error => {
@@ -267,13 +314,17 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Delete bet
         deleteBet(bet_id) {
+            // Update bets
             this.bets = this.bets.filter(bet => bet.bet_id !== bet_id)
         },
 
 
+        // Get finished round
         async getFinishedRound(round_id) {
             try {
+                // Get finished round request
                 return await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
                     finished_round: {
                         round_id: String(round_id)
@@ -285,8 +336,10 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Get rewards
         async myRewards() {
             try {
+                // Get rewards request
                 return await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
                     my_pending_reward_rounds: {
                         player: jetpack.getAddress()
@@ -298,7 +351,9 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Claim rewards
         async claimRewards() {
+            // Claim rewards request
             await jetpack.sendTx([{
                 typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
                 value: {
@@ -307,10 +362,12 @@ export const useGlobalStore = defineStore('global', {
                     msg: new TextEncoder().encode(JSON.stringify({ collect_winnings: {} }))
                 }
             }]).then((result) => {
+                // Get error as a result
                 if (result.type === 'error') {
                     console.log(error)
                 }
 
+                // Get tx as a result
                 if (result.type === 'tx') {
                     console.log(result)
                 }
@@ -320,8 +377,10 @@ export const useGlobalStore = defineStore('global', {
         },
 
 
+        // Get leaderbpard
         async getLeaderbpard() {
             try {
+                // Get leaderbpard request
                 return await this.client.queryContractSmart('neutron1edsy5v3lty0j6xd5sg8nzcmnkuwjgu2887xrhyg7s8wxnww39kfqy3cu3k', {
                     users: {}
                 })

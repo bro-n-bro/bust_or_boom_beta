@@ -55,17 +55,22 @@ const router = createRouter({
 router.beforeResolve((to, from, next) => {
 	let store = useGlobalStore()
 
+	// Check access
 	to.matched.some(record => {
 		let access = record.meta.accessDenied
 
 		if(access.length) {
+			// Connected
 			if(access.includes('connected') && store.isConnected) {
+				// Redirect
 				next({ name: 'MainPage' })
 
 				return false
 			}
 
+			// Not connected
 			if(access.includes('not_connected') && !store.isConnected) {
+				// Redirect
 				next({ name: 'ConnectPage' })
 
 				return false
@@ -77,5 +82,6 @@ router.beforeResolve((to, from, next) => {
 		}
 	})
 })
+
 
 export default router

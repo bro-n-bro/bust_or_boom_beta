@@ -1,15 +1,19 @@
 <template>
+    <!-- Main image -->
     <img src="@/assets/connect_page_img.png" alt="">
 
+    <!-- Connection status -->
     <div class="conn_status">
         <span v-if="!store.isRTCConnected">Disconnect</span>
         <span v-else class="green">Connected</span>
     </div>
 
+    <!-- Connect button -->
     <button class="btn" @click.prevent="connectWallet()" v-if="!store.isConnected">Connect Jet Wallet</button>
 
     <!-- <button class="btn" @click.prevent="faucet()" v-else :class="{ disabled: isFaucetProcess }">Get tokens</button> -->
 
+    <!-- Version info -->
     <div class="version">
         {{ version }}
     </div>
@@ -26,17 +30,20 @@
         version = process.env.APP_VERSION || 'unknown'
 
 
+    // Connect wallet
     async function connectWallet() {
+        // Connect wallet
         await store.connectWallet().then(async () => {
+            // Check user account
             await store.checkUserAccount()
 
-            // router.push({ path: '/register' })
-
             if (store.isRegistered !== null && store.isRegistered === false) {
+                // Redirect
                 router.push({ path: '/register' })
             }
 
             if (store.isRegistered) {
+                // Redirect
                 router.push({ path: '/main' })
             }
 		}).catch(error => {
@@ -47,102 +54,102 @@
 
 
 <style scoped>
-img
-{
-    display: block;
+    img
+    {
+        display: block;
 
-    width: 100%;
-    margin-top: -91px;
+        width: 100%;
+        margin-top: -91px;
 
-    pointer-events: none;
-}
-
-
-.conn_status
-{
-    margin-top: auto;
-    margin-bottom: 16px;
-
-    text-align: center;
-
-    color: rgba(255, 255, 255, .3);
-}
+        pointer-events: none;
+    }
 
 
-.conn_status span
-{
-    position: relative;
+    .conn_status
+    {
+        margin-top: auto;
+        margin-bottom: 16px;
 
-    display: inline-block;
+        text-align: center;
 
-    padding-left: 12px;
-
-    vertical-align: top;
-}
-
-
-.conn_status span:before
-{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-
-    display: block;
-
-    width: 6px;
-    height: 6px;
-    margin: auto 0;
-
-    content: '';
-
-    border-radius: 50%;
-    background: rgba(255, 255, 255, .3);
-}
+        color: rgba(255, 255, 255, .3);
+    }
 
 
-.conn_status span.green:before
-{
-    background: #06c50e;
-}
+    .conn_status span
+    {
+        position: relative;
+
+        display: inline-block;
+
+        padding-left: 12px;
+
+        vertical-align: top;
+    }
 
 
-.btn
-{
-    font-size: 18px;
-    font-weight: 500;
+    .conn_status span:before
+    {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
 
-    position: relative;
-    z-index: 3;
+        display: block;
 
-    display: block;
+        width: 6px;
+        height: 6px;
+        margin: auto 0;
 
-    width: calc(100% - 40px);
-    height: 52px;
-    margin: 0 auto;
+        content: '';
 
-    border-radius: 12px;
-    background: #950fff;
-}
-
-
-.btn.disabled
-{
-    pointer-events: none;
-
-    opacity: .5;
-}
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .3);
+    }
 
 
-.version
-{
-    font-size: 10px;
+    .conn_status span.green:before
+    {
+        background: #06c50e;
+    }
 
-    margin-top: 40px;
-    margin-bottom: 12px;
 
-    text-align: center;
+    .btn
+    {
+        font-size: 18px;
+        font-weight: 500;
 
-    opacity: .5;
-}
+        position: relative;
+        z-index: 3;
+
+        display: block;
+
+        width: calc(100% - 40px);
+        height: 52px;
+        margin: 0 auto;
+
+        border-radius: 12px;
+        background: #950fff;
+    }
+
+
+    .btn.disabled
+    {
+        pointer-events: none;
+
+        opacity: .5;
+    }
+
+
+    .version
+    {
+        font-size: 10px;
+
+        margin-top: 40px;
+        margin-bottom: 12px;
+
+        text-align: center;
+
+        opacity: .5;
+    }
 </style>

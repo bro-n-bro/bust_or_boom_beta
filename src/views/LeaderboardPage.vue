@@ -1,28 +1,41 @@
 <template>
+    <!-- Top panel -->
     <TopPanel />
 
+
+    <!-- Leaderbpard page -->
     <section class="leaderbpard_page">
+        <!-- Leaderbpard page - List -->
         <div class="list" v-if="!loading && items.length">
             <div class="item" v-for="(item, index) in items" :key="index">
+                <!-- Leaderbpard page - Position -->
                 <div class="number"></div>
 
+                <!-- Leaderbpard page - Username -->
                 <div class="name">{{ item.display_name }}</div>
 
+                <!-- Leaderbpard page - XP -->
                 <div class="xp">{{ (item.experience / Math.pow(10, 3)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) }}</div>
             </div>
         </div>
 
+        <!-- Current user -->
         <div class="user_position" v-if="currentUser">
             <div class="item">
+                <!-- Current user - Position -->
                 <div class="number">{{ currentUser.position }}.</div>
 
+                <!-- Current user - Username -->
                 <div class="name">{{ currentUser.display_name }}</div>
 
+                <!-- Current user - XP -->
                 <div class="xp">{{ (currentUser.experience / Math.pow(10, 3)).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) }}</div>
             </div>
         </div>
     </section>
 
+
+    <!-- Bottom panel -->
     <BottomPanel />
 </template>
 
@@ -31,6 +44,7 @@
     import { ref, onBeforeMount, watch, computed } from 'vue'
     import { useGlobalStore } from '@/store'
 
+    // Components
     import TopPanel from '@/components/TopPanel.vue'
     import BottomPanel from '@/components/BottomPanel.vue'
 
@@ -60,224 +74,237 @@
             'neutron1lfypvrrw8h9g7r4lxsrgxmnw2chnreevud9n98',
             'neutron1gpd5jan0ss5shufqu2ape99kyjsfyfx29tdycv',
             'neutron1pk0gdxaes763c95wsvrvgzknjs6segdswwtjjk',
-            'neutron1g7u7gwxtd5m222vun5v4p7jr0e8wz9m59qdtv6',
-            'neutron1n0lctf0dtcvusgujnck92hgmzqlcjer8x4r5zp',
-            'neutron1p4hc20yrucx4hk4lf68wmuzvsa0rrxkuua7grf'
+            // 'neutron1g7u7gwxtd5m222vun5v4p7jr0e8wz9m59qdtv6',
+            // 'neutron1n0lctf0dtcvusgujnck92hgmzqlcjer8x4r5zp',
+            // 'neutron1p4hc20yrucx4hk4lf68wmuzvsa0rrxkuua7grf'
         ]
 
 
     onBeforeMount(async () => {
+        // Get leaderbpard
         items.value = await store.getLeaderbpard()
 
+        // Filter leaderbpard
         items.value = items.value.filter(el => !banned_list.includes(el.address))
 
+        // Sort leaderbpard by XP
         items.value.sort((a, b) => b.experience - a.experience)
 
+        // Current user index
         let currentUserIndex = items.value.findIndex(el => el.address === store.getUserAddress())
 
         if (currentUserIndex !== -1) {
+            // Current user data
             currentUser.value = items.value[currentUserIndex]
             currentUser.value.position = currentUserIndex + 1
         }
 
+        // Hide loader
         loading.value = false
     })
 
 
     watch(computed(() => store.roundInfo.bidding_round.id), async () => {
+        // Show loader
         loading.value = true
 
+        // Get leaderbpard
         items.value = await store.getLeaderbpard()
 
+        // Filter leaderbpard
         items.value = items.value.filter(el => !banned_list.includes(el.address))
 
+        // Sort leaderbpard by XP
         items.value.sort((a, b) => b.experience - a.experience)
 
+        // Current user index
         let currentUserIndex = items.value.findIndex(el => el.address === store.getUserAddress())
 
         if (currentUserIndex !== -1) {
+            // Current user data
             currentUser.value = items.value[currentUserIndex]
             currentUser.value.position = currentUserIndex + 1
         }
 
+        // Hide loader
         loading.value = false
     })
 </script>
 
 
 <style scoped>
-.leaderbpard_page
-{
-    position: absolute;
-    top: 0;
-    left: 0;
+    .leaderbpard_page
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
 
-    display: flex;
-    flex-direction: column;
+        display: flex;
+        flex-direction: column;
 
-    width: 100%;
-    height: 100%;
-    padding: 72px 10px 62px;
-}
-
-
-.list
-{
-    display: flex;
-    overflow: auto;
-    flex-direction: column;
-
-    height: calc(100% - 67px);
-    margin-bottom: auto;
-    padding: 10px;
-
-    counter-reset: number;
-
-    border-radius: 12px;
-    background: #001802;
-
-    overscroll-behavior-y: contain;
-    gap: 4px;
-}
+        width: 100%;
+        height: 100%;
+        padding: 72px 10px 62px;
+    }
 
 
-.item
-{
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: nowrap;
-    justify-content: space-between;
+    .list
+    {
+        display: flex;
+        overflow: auto;
+        flex-direction: column;
 
-    padding: 7px 10px;
+        height: calc(100% - 67px);
+        margin-bottom: auto;
+        padding: 10px;
 
-    white-space: nowrap;
+        counter-reset: number;
 
-    border-radius: 8px;
-    background: #000e01;
+        border-radius: 12px;
+        background: #001802;
 
-    gap: 8px;
-}
-
-
-.item .number
-{
-    font-size: 18px;
-    font-weight: 500;
-}
+        overscroll-behavior-y: contain;
+        gap: 4px;
+    }
 
 
-.list .item .number:before
-{
-    content: counter(number) '.';
-    counter-increment: number;
-}
+    .item
+    {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+
+        padding: 7px 10px;
+
+        white-space: nowrap;
+
+        border-radius: 8px;
+        background: #000e01;
+
+        gap: 8px;
+    }
 
 
-.list .item:nth-child(1) .number
-{
-    line-height: 24px;
-
-    width: 24px;
-    min-width: 24px;
-    height: 24px;
-
-    text-align: center;
-
-    color: #fff;
-    border-radius: 50%;
-    background: #ffa100;
-}
-
-.list .item:nth-child(1) .number:before
-{
-    content: counter(number);
-}
+    .item .number
+    {
+        font-size: 18px;
+        font-weight: 500;
+    }
 
 
-.list .item:nth-child(2) .number
-{
-    line-height: 24px;
-
-    width: 24px;
-    min-width: 24px;
-    height: 24px;
-
-    text-align: center;
-
-    color: #000e01;
-    border-radius: 50%;
-    background: #9c9c9c;
-}
-
-.list .item:nth-child(2) .number:before
-{
-    content: counter(number);
-}
+    .list .item .number:before
+    {
+        content: counter(number) '.';
+        counter-increment: number;
+    }
 
 
-.list .item:nth-child(3) .number
-{
-    line-height: 24px;
+    .list .item:nth-child(1) .number
+    {
+        line-height: 24px;
 
-    width: 24px;
-    min-width: 24px;
-    height: 24px;
+        width: 24px;
+        min-width: 24px;
+        height: 24px;
 
-    text-align: center;
+        text-align: center;
 
-    color: #fff;
-    border-radius: 50%;
-    background: #792600;
-}
+        color: #fff;
+        border-radius: 50%;
+        background: #ffa100;
+    }
 
-.list .item:nth-child(3) .number:before
-{
-    content: counter(number);
-}
-
-
-.item .name
-{
-    font-size: 18px;
-    font-weight: 500;
-
-    overflow: hidden;
-
-    width: 100%;
-
-    text-overflow: ellipsis;
-}
+    .list .item:nth-child(1) .number:before
+    {
+        content: counter(number);
+    }
 
 
-.item .xp
-{
-    font-size: 18px;
-    font-weight: 500;
+    .list .item:nth-child(2) .number
+    {
+        line-height: 24px;
 
-    display: flex;
-    align-content: center;
-    align-items: center;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
+        width: 24px;
+        min-width: 24px;
+        height: 24px;
 
-    gap: 4px;
-}
+        text-align: center;
 
+        color: #000e01;
+        border-radius: 50%;
+        background: #9c9c9c;
+    }
 
-
-.user_position
-{
-    margin-top: 10px;
-    padding: 10px;
-
-    border-radius: 12px;
-    background: #001802;
-}
+    .list .item:nth-child(2) .number:before
+    {
+        content: counter(number);
+    }
 
 
-.user_position .item
-{
-    box-shadow: inset 0 0 0 1px #3feb00;
-}
+    .list .item:nth-child(3) .number
+    {
+        line-height: 24px;
+
+        width: 24px;
+        min-width: 24px;
+        height: 24px;
+
+        text-align: center;
+
+        color: #fff;
+        border-radius: 50%;
+        background: #792600;
+    }
+
+    .list .item:nth-child(3) .number:before
+    {
+        content: counter(number);
+    }
+
+
+    .item .name
+    {
+        font-size: 18px;
+        font-weight: 500;
+
+        overflow: hidden;
+
+        width: 100%;
+
+        text-overflow: ellipsis;
+    }
+
+
+    .item .xp
+    {
+        font-size: 18px;
+        font-weight: 500;
+
+        display: flex;
+        align-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+
+        gap: 4px;
+    }
+
+
+
+    .user_position
+    {
+        margin-top: 10px;
+        padding: 10px;
+
+        border-radius: 12px;
+        background: #001802;
+    }
+
+
+    .user_position .item
+    {
+        box-shadow: inset 0 0 0 1px #3feb00;
+    }
 </style>

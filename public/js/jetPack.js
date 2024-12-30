@@ -36,7 +36,7 @@
         #jwBalances = {}
         #pubKey = ''
         #isConnected = false
-        #connectionInterval = 1000
+        #connectionInterval = 500
         #callbacks = {}
         #eventListeners = {}
 
@@ -172,7 +172,7 @@
             try {
                 // Open the URL
                 this._openUrl(`https://t.me/${BOT_USERNAME}/${APP_NAME}?startapp=${encodedData}`)
-                // this._openUrl(`http://localhost:8081/auth?tgWebAppStartParam=${encodedData}`)
+                // this._openUrl(`http://localhost:8080/auth?tgWebAppStartParam=${encodedData}`)
 
                 // Connection
                 this._connection()
