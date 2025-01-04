@@ -5,7 +5,7 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 
 // Init jetPack
-const jetpack = new JetPack(true)
+const jetpack = new JetPack()
 
 
 export const useGlobalStore = defineStore('global', {
@@ -98,6 +98,8 @@ export const useGlobalStore = defineStore('global', {
                 // Set registered status
                 this.isRegistered = true
             } catch (error) {
+                console.log(error)
+
                 // Set registered status
                 this.isRegistered = false
             }
@@ -201,11 +203,14 @@ export const useGlobalStore = defineStore('global', {
                 await fetch('https://lcd.pion-1.bronbro.io/slinky/oracle/v1/get_price?currency_pair.Base=ATOM&currency_pair.Quote=USD')
                     .then(response => response.json())
                     .then(data => {
-                        data.price.price = data.price.price.padEnd(this.roundInfo?.live_round?.open_price.length, '0')
-                        data.decimals = this.roundInfo?.live_round?.open_price.length - 1
-
                         // Set price info
                         this.priceInfo = data
+
+                        // Update live round price
+                        this.roundInfo.live_round.open_price = this.roundInfo.live_round.open_price.slice(0, this.priceInfo.price.price.length)
+
+                        // Set price decimals
+                        this.roundInfo.live_round.decimals = this.priceInfo.decimals
                     })
             } catch (error) {
                 console.error(error)
@@ -324,12 +329,18 @@ export const useGlobalStore = defineStore('global', {
         // Get finished round
         async getFinishedRound(round_id) {
             try {
+                console.log(111)
                 // Get finished round request
-                return await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
+                let result =  await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
                     finished_round: {
                         round_id: String(round_id)
                     }
                 })
+
+                console.log(result)
+                console.log(222)
+
+                return result
             } catch (error) {
                 return false
             }

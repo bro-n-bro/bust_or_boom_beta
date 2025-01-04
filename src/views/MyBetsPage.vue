@@ -20,6 +20,7 @@
             <button class="btn" @click.prevent="setFilter('lose')" :class="{ active: filter === 'lose' }">Lose</button>
         </div>
 
+
         <!-- My bets page - List -->
         <div class="list" v-if="filterResult.length && !loading">
             <!-- My bets page - Bet -->
@@ -35,7 +36,7 @@
 
                             <!-- My bets page - Live bet - Round price - Value -->
                             <div class="val">
-                                {{ calcFixedPrice(bet.roundInfo.live_round.open_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                                {{ calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
                             </div>
                         </div>
 
@@ -49,8 +50,8 @@
 
                             <!-- My bets page - Live bet - Current price - Label -->
                             <div class="val" :class="{
-                                green: calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice(),
-                                red: calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()
+                                green: calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) <= calcCurrentPrice(),
+                                red: calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) > calcCurrentPrice()
                             }">
                                 {{ calcCurrentPrice().toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
                             </div>
@@ -59,11 +60,11 @@
 
                     <!-- My bets page - Live bet - Image -->
                     <div class="image">
-                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
-                        <img src="@/assets/live_bet_img.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) <= calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) > calcCurrentPrice()">
 
-                        <img src="@/assets/live_bet_img3.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price) <= calcCurrentPrice()">
-                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price) > calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img3.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) <= calcCurrentPrice()">
+                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) > calcCurrentPrice()">
                     </div>
 
                     <!-- My bets page - Live bet - Bottom -->
@@ -120,12 +121,16 @@
                         <!-- My bets page - Finished bet - Prices -->
                         <div class="prices">
                             <!-- My bets page - Finished bet - Round price -->
-                            <span>{{ calcFixedPrice(bet.roundInfo.live_round.open_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                            <span>
+                                {{ calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                            </span>
 
                             Vs.
 
                             <!-- My bets page - Finished bet - Finished price -->
-                            <span>{{ calcFinishedPrice(bet.finished_round.close_price).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}</span>
+                            <span>
+                                {{ calcFinishedPrice(bet.finished_round.close_price, bet.finished_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                            </span>
                         </div>
 
                         <!-- My bets page - Finished bet - Status -->
@@ -140,7 +145,9 @@
                         <!-- My bets page - Finished bet - Prize -->
                         <div class="prize">
                             <!-- My bets page - Finished bet - Prize won -->
-                            <span v-if="bet.finished_round.winner === bet.type">{{ bet.prize.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }} Boom</span>
+                            <span v-if="bet.finished_round.winner === bet.type">
+                                {{ bet.prize.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }} Boom
+                            </span>
 
                             <!-- My bets page - Finished bet - Prize lose -->
                             <span v-else>-{{ bet.amount }} Boom</span>
@@ -257,8 +264,8 @@
 
 
     // Calc round price
-    function calcFixedPrice(price) {
-        return Number(String(price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
+    function calcFixedPrice(price, decimals) {
+        return Number(price) / Math.pow(10, decimals)
     }
 
 
@@ -269,8 +276,8 @@
 
 
     // Calc finished time
-    function calcFinishedPrice(close_price) {
-        return Number(String(close_price).slice(0, store.priceInfo.price.price.length)) / Math.pow(10, store.priceInfo.decimals)
+    function calcFinishedPrice(close_price, decimals) {
+        return Number(close_price) / Math.pow(10, decimals)
     }
 
 

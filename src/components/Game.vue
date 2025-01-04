@@ -149,21 +149,17 @@
     const store = useGlobalStore(),
         router = useRouter(),
         betAmount = ref(0),
-        priceLength = ref(0),
         fixedPrice = ref(0),
         timerTime = ref(0),
         isProcess = ref(false)
 
 
     onBeforeMount(() => {
-        // Set price length
-        priceLength.value = store.priceInfo.price.price.length
-
         // Set bet amount
         betAmount.value = localStorage.getItem('betAmount') || 1
 
         // Set round price
-        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, priceLength.value)) / Math.pow(10, store.priceInfo.decimals)
+        fixedPrice.value = Number(store.roundInfo.live_round.open_price) / Math.pow(10, store.roundInfo.live_round.decimals)
 
         // Set timer time
         timerTime.value = (Number(store.roundInfo.bidding_round.open_time) / 1e6 - Number(store.roundInfo.current_time) / 1e6)
@@ -171,11 +167,8 @@
 
 
     watch(computed(() => store.roundInfo.bidding_round.id), () => {
-        // Update price length
-        priceLength.value = store.priceInfo.price.price.length
-
         // Update round price
-        fixedPrice.value = Number(String(store.roundInfo.live_round.open_price).slice(0, priceLength.value)) / Math.pow(10, store.priceInfo.decimals)
+        fixedPrice.value = Number(store.roundInfo.live_round.open_price) / Math.pow(10, store.roundInfo.live_round.decimals)
 
         // Update timer time
         timerTime.value = (Number(store.roundInfo.bidding_round.open_time) / 1e6 - Number(store.roundInfo.current_time) / 1e6)
@@ -196,7 +189,7 @@
 
     // Calc current price
     function calcCurrentPrice() {
-        return store.priceInfo.price.price / Math.pow(10, store.priceInfo.decimals)
+        return Number(store.priceInfo.price.price) / Math.pow(10, store.priceInfo.decimals)
     }
 
 

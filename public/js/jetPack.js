@@ -36,24 +36,23 @@
         #jwBalances = {}
         #pubKey = ''
         #isConnected = false
-        #connectionInterval = 500
+        #intervalId = null
+        #connectionInterval = 1000
         #callbacks = {}
         #eventListeners = {}
 
 
         // Constructor for JetPack class
-        constructor(autoConnect) {
+        constructor() {
             // Init
             this.init().then(() => {
-                if (autoConnect) {
-                    // Auto connection
-                    this._connection()
-                }
+                // Auto connection
+                this._connection()
             })
 
-            // Destroy Peer on close
+            // Close connection/Destroy Peer
             window.addEventListener('beforeunload', () => {
-                // Close Peer
+                // Close connection
                 if (this.#conn) {
                     this.#conn.close()
                 }
@@ -171,11 +170,8 @@
             // Try to open the URL
             try {
                 // Open the URL
-                this._openUrl(`https://t.me/${BOT_USERNAME}/${APP_NAME}?startapp=${encodedData}`)
-                // this._openUrl(`http://localhost:8080/auth?tgWebAppStartParam=${encodedData}`)
-
-                // Connection
-                this._connection()
+                // this._openUrl(`https://t.me/${BOT_USERNAME}/${APP_NAME}?startapp=${encodedData}`)
+                this._openUrl(`http://localhost:8080/auth?tgWebAppStartParam=${encodedData}`)
             } catch (error) {
                 // Reject promise
                 reject('Failed to open URL.')
@@ -185,56 +181,68 @@
 
         // Connection
         _connection() {
+            // Check if an interval is already running
+            if (this.#intervalId) {
+                // Clear the previous interval if it exists
+                clearInterval(this.#intervalId)
+            }
+
             // Create connection to jetWallet
-            const intervalId = setInterval(() => {
+            this.#intervalId = setInterval(() => {
+                if (this.#conn) {
+                    // Close failed connection
+                    this.#conn.close()
+
+                    // Reset connection
+                    this.#conn = null
+                }
+
                 // Save connection
                 this.#conn = this.#peer.connect(`jw-${BOT_ID}-${this.#userId}`)
 
-                if (this.#conn) {
-                    // Successful connection
-                    this.#conn.on('open', () => {
-                        // Stop the interval
-                        clearInterval(intervalId)
+                // Successful connection
+                this.#conn.on('open', () => {
+                    // Stop the interval
+                    clearInterval(this.#intervalId)
 
-                        // Set connected status to true
-                        this.#isConnected = true
+                    // Set connected status to true
+                    this.#isConnected = true
 
-                        // Call the 'connect' event
-                        this._emit('connect')
-                    })
+                    // Call the 'connect' event
+                    this._emit('connect')
+                })
 
-                    // Processing data receipt
-                    this.#conn.on('data', data => this._handleData(data))
+                // Processing data receipt
+                this.#conn.on('data', data => this._handleData(data))
 
-                    // Error handling
-                    this.#conn.on('error', () => {
-                        // Stop the interval
-                        clearInterval(intervalId)
-                    })
+                // Error handling
+                this.#conn.on('error', () => {
+                    // Stop the interval
+                    clearInterval(this.#intervalId)
+                })
 
-                    // Handle disconnection event
-                    this.#conn.on('close', () => {
-                        // Set the connection status to false
-                        this.#isConnected = false
+                // Handle disconnection event
+                this.#conn.on('close', () => {
+                    // Set the connection status to false
+                    this.#isConnected = false
 
-                        // Call the 'disconnect' event
-                        this._emit('disconnect')
+                    // Call the 'disconnect' event
+                    this._emit('disconnect')
 
-                        // Auto connection
-                        this._connection()
-                    })
+                    // Auto connection
+                    this._connection()
+                })
 
-                    this.#conn.on('disconnected', () => {
-                        // Set the connection status to false
-                        this.#isConnected = false
+                this.#conn.on('disconnected', () => {
+                    // Set the connection status to false
+                    this.#isConnected = false
 
-                        // Call the 'disconnect' event
-                        this._emit('disconnect')
+                    // Call the 'disconnect' event
+                    this._emit('disconnect')
 
-                        // Auto connection
-                        this._connection()
-                    })
-                }
+                    // Auto connection
+                    this._connection()
+                })
             }, this.#connectionInterval)
         }
 
