@@ -10,7 +10,7 @@
 
             <div>
                 <!-- Balance - Token -->
-                <div class="label">Boom</div>
+                <div class="label">BOOM</div>
 
                 <!-- Balance - Value -->
                 <div class="val">

@@ -62,7 +62,8 @@ export const useGlobalStore = defineStore('global', {
                     this.isConnected = true
                 })
             } catch(error) {
-                alert(error)
+                // Throwing an exception
+                throw error
             }
 		},
 
@@ -98,10 +99,11 @@ export const useGlobalStore = defineStore('global', {
                 // Set registered status
                 this.isRegistered = true
             } catch (error) {
-                console.log(error)
-
                 // Set registered status
                 this.isRegistered = false
+
+                // Throwing an exception
+                throw error
             }
         },
 
@@ -126,9 +128,8 @@ export const useGlobalStore = defineStore('global', {
             }]).then(async (result) => {
                 // Get error as a result
                 if (result.type === 'error') {
-                    console.log(error)
-
-                    return false
+                    // Throwing an exception
+                    throw error
                 }
 
                 // Get tx as a result
@@ -139,9 +140,8 @@ export const useGlobalStore = defineStore('global', {
                     return true
                 }
             }).catch(error => {
-                console.log(error)
-
-                return false
+                // Throwing an exception
+                throw error
             })
         },
 
@@ -213,7 +213,8 @@ export const useGlobalStore = defineStore('global', {
                         this.roundInfo.live_round.decimals = this.priceInfo.decimals
                     })
             } catch (error) {
-                console.error(error)
+                // Throwing an exception
+                throw error
             }
         },
 
@@ -225,10 +226,9 @@ export const useGlobalStore = defineStore('global', {
                 this.roundInfo = await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
                     status: {}
                 })
-
-                return true
             } catch (error) {
-                return false
+                // Throwing an exception
+                throw error
             }
         },
 
@@ -248,7 +248,8 @@ export const useGlobalStore = defineStore('global', {
                     })
                 })
             } catch (error) {
-                console.error(error)
+                // Throwing an exception
+                throw error
             }
         },
 
@@ -292,7 +293,8 @@ export const useGlobalStore = defineStore('global', {
             }]).then((result) => {
                 // Get error as a result
                 if (result.type === 'error') {
-                    console.log(error)
+                    // Throwing an exception
+                    throw error
                 }
 
                 // Get tx as a result
@@ -314,7 +316,8 @@ export const useGlobalStore = defineStore('global', {
                     this.loadBalances()
                 }
             }).catch(error => {
-                console.log(error)
+                // Throwing an exception
+                throw error
             })
         },
 
@@ -329,20 +332,21 @@ export const useGlobalStore = defineStore('global', {
         // Get finished round
         async getFinishedRound(round_id) {
             try {
-                console.log(111)
                 // Get finished round request
                 let result =  await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
                     finished_round: {
-                        round_id: String(round_id)
+                        round_id: round_id
                     }
                 })
 
-                console.log(result)
-                console.log(222)
+                // Format prices
+                result.close_price = result.close_price.slice(0, this.priceInfo.price.price.length)
+                result.open_price = result.open_price.slice(0, this.priceInfo.price.price.length)
 
                 return result
             } catch (error) {
-                return false
+                // Throwing an exception
+                throw error
             }
         },
 
@@ -357,7 +361,8 @@ export const useGlobalStore = defineStore('global', {
                     }
                 })
             } catch (error) {
-                return false
+                // Throwing an exception
+                throw error
             }
         },
 
@@ -383,7 +388,8 @@ export const useGlobalStore = defineStore('global', {
                     console.log(result)
                 }
             }).catch(error => {
-                console.log(error)
+                // Throwing an exception
+                throw error
             })
         },
 
@@ -396,7 +402,8 @@ export const useGlobalStore = defineStore('global', {
                     users: {}
                 })
             } catch (error) {
-                return false
+                // Throwing an exception
+                throw error
             }
         }
     }

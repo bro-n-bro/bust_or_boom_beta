@@ -254,10 +254,16 @@
             prize: prize,
             round_id: store.roundInfo.bidding_round.id,
             type: 'bear'
-        })
+        }).then(() => {
+            // Redirect
+            router.push({ path: '/my_bets' })
+        }).catch(error => {
+            // Error
+			console.log(error)
 
-        // Redirect
-        router.push({ path: '/my_bets' })
+            // Set process ststus
+            isProcess.value = false
+		})
     }
 
 
@@ -272,10 +278,16 @@
             prize: prize,
             round_id: store.roundInfo.bidding_round.id,
             type: 'bull'
-        })
+        }).then(() => {
+            // Redirect
+            router.push({ path: '/my_bets' })
+        }).catch(error => {
+            // Error
+			console.log(error)
 
-        // Redirect
-        router.push({ path: '/my_bets' })
+            // Set process ststus
+            isProcess.value = false
+		})
     }
 
 
@@ -289,7 +301,7 @@
 <style scoped>
     .game_page
     {
-        padding-top: 72px;
+        padding-top: 79px;
         padding-bottom: 62px;
     }
 

@@ -129,7 +129,7 @@
 
                             <!-- My bets page - Finished bet - Finished price -->
                             <span>
-                                {{ calcFinishedPrice(bet.finished_round.close_price, bet.finished_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                                {{ calcFinishedPrice(bet.finished_round.close_price, bet.roundInfo.live_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
                             </span>
                         </div>
 
@@ -187,7 +187,7 @@
 
     onBeforeMount(async () => {
         // Get bets
-        store.bets.forEach(async bet => bet.finished_round = await store.getFinishedRound(bet.roundInfo.bidding_round.id))
+        store.bets.forEach(async bet => bet.finished_round = await store.getFinishedRound(bet.round_id).catch(error => null))
 
         // Filter bets
         filterResult.value = store.bets
@@ -253,7 +253,11 @@
 
     // Delete bet
     function deleteBet(bet_id) {
+        // Delete bet
         store.deleteBet(bet_id)
+
+        // Filter bets
+        filterResult.value = store.bets
     }
 
 
@@ -298,7 +302,7 @@
 <style scoped>
     .my_bets_page
     {
-        padding-top: 72px;
+        padding-top: 79px;
         padding-bottom: 62px;
     }
 
@@ -380,6 +384,8 @@
 
         width: 24px;
         height: 24px;
+
+        pointer-events: none;
     }
 
 

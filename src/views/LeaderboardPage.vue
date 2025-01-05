@@ -144,7 +144,7 @@
 
         width: 100%;
         height: 100%;
-        padding: 72px 10px 62px;
+        padding: 79px 10px 62px;
     }
 
 

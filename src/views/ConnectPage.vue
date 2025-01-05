@@ -1,4 +1,7 @@
 <template>
+    <!-- Loader -->
+    <Loader v-if="isProcess" />
+
     <!-- Main image -->
     <img src="@/assets/connect_page_img.png" alt="">
 
@@ -21,17 +24,25 @@
 
 
 <script setup>
+    import { ref } from 'vue'
     import { useGlobalStore } from '@/store'
     import { useRouter } from 'vue-router'
+
+    // Components
+    import Loader from '@/components/Loader.vue'
 
 
     const store = useGlobalStore(),
         router = useRouter(),
+        isProcess = ref(false),
         version = process.env.APP_VERSION || 'unknown'
 
 
     // Connect wallet
     async function connectWallet() {
+        // Set process ststus
+        isProcess.value = true
+
         // Connect wallet
         await store.connectWallet().then(async () => {
             // Check user account
@@ -47,7 +58,13 @@
                 router.push({ path: '/main' })
             }
 		}).catch(error => {
+            // User rejected request
 			console.log(error)
+
+            alert(error)
+
+            // Set process ststus
+            isProcess.value = false
 		})
     }
 </script>
