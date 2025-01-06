@@ -58,10 +58,10 @@
                 router.push({ path: '/main' })
             }
 		}).catch(error => {
-            // User rejected request
+            // Error request
 			console.log(error)
 
-            alert(error)
+            // alert(error)
 
             // Set process ststus
             isProcess.value = false
