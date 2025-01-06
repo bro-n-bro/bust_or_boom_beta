@@ -31,7 +31,7 @@
         #peer = null
         #peerID = null
         #conn = null
-        #chainId = ''
+        #chainId = 'cosmoshub'
         #jwAddress = ''
         #jwBalances = {}
         #pubKey = ''
@@ -287,7 +287,10 @@
 
 
         // Public method to connect wallet
-        connectWallet(chain_id = 'cosmoshub') {
+        connectWallet(chain_id) {
+            // Save chain id
+            this.#chainId = chain_id
+
             return new Promise((resolve, reject) => {
                 // Generate a random ID
                 const requestId = this._generateRandomId()
