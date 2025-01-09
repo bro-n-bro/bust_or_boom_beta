@@ -37,13 +37,14 @@
         #pubKey = ''
         #isConnected = false
         #intervalId = null
-        #connectionInterval = 1000
+        #connectionInterval = 750
         #callbacks = {}
-        #eventListeners = {}
 
 
         // Constructor for JetPack class
         constructor() {
+            this._eventListeners = {}
+
             // Init
             this.init().then(() => {
                 // Auto connection
@@ -68,18 +69,18 @@
         // Subscribe to events
         on(event, callback) {
             // Check event
-            if (!this.#eventListeners[event]) {
-                this.#eventListeners[event] = []
+            if (!this._eventListeners[event]) {
+                this._eventListeners[event] = []
             }
 
             // Save callback
-            this.#eventListeners[event].push(callback)
+            this._eventListeners[event].push(callback)
         }
 
 
         // Event call
-        _emit(event, data) {
-            const listeners = this.#eventListeners[event]
+        _emit(event, data = null) {
+            const listeners = this._eventListeners[event]
 
             if (listeners) {
                 listeners.forEach(callback => callback(data))
@@ -136,6 +137,9 @@
             } else if (data.type === 'error') {
                 // Emit an event for an error
                 this._emit('error', data.message)
+            } else if (data.type === 'eventChangeWallet') {
+                // Call the 'walletChanged' event
+                this._emit('walletChanged')
             } else {
                 // Emit an event for an error
                 this._emit('error', 'Unknown data type received.')
