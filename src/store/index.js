@@ -5,7 +5,7 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 
 // Init jetPack
-const jetpack = new JetPack()
+window.jetPack = new JetPack()
 
 
 export const useGlobalStore = defineStore('global', {
@@ -34,17 +34,17 @@ export const useGlobalStore = defineStore('global', {
         // Init
         init() {
             // Connect event
-            jetpack.on('connect', () => {
+            window.jetPack.on('connect', () => {
                 this.isRTCConnected = true
             })
 
             // Disconnect event
-            jetpack.on('disconnect', () => {
+            window.jetPack.on('disconnect', () => {
                 this.isRTCConnected = false
             })
 
             // Close event
-            jetpack.on('close', () => {
+            window.jetPack.on('close', () => {
                 this.isRTCConnected = false
             })
         },
@@ -54,7 +54,7 @@ export const useGlobalStore = defineStore('global', {
         async connectWallet() {
             try {
                 // Connect wallet request
-                await jetpack.connectWallet(this.chainID).then(async () => {
+                await window.jetPack.connectWallet(this.chainID).then(async () => {
                     // Create CosmWasmClient
                     this.client = await CosmWasmClient.connect('https://rpc.pion-1.bronbro.io')
 
@@ -70,7 +70,7 @@ export const useGlobalStore = defineStore('global', {
 
         // Get user address
         getUserAddress() {
-            return jetpack.getAddress()
+            return window.jetPack.getAddress()
         },
 
 
@@ -80,7 +80,7 @@ export const useGlobalStore = defineStore('global', {
                 // Check user account request
                 this.user = await this.client.queryContractSmart('neutron1edsy5v3lty0j6xd5sg8nzcmnkuwjgu2887xrhyg7s8wxnww39kfqy3cu3k', {
                     user_by_address: {
-                        address: jetpack.getAddress()
+                        address: window.jetPack.getAddress()
                     }
                 })
 
@@ -111,10 +111,10 @@ export const useGlobalStore = defineStore('global', {
         // Create user account
         async createUserAccount({ username, display_name }) {
             // Create user account request
-            return await jetpack.sendTx([{
+            return await window.jetPack.sendTx([{
                 typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
                 value: {
-                    sender: jetpack.getAddress(),
+                    sender: window.jetPack.getAddress(),
                     contract: 'neutron1edsy5v3lty0j6xd5sg8nzcmnkuwjgu2887xrhyg7s8wxnww39kfqy3cu3k',
                     msg: new TextEncoder().encode(JSON.stringify({
                         modify_user: {
@@ -149,9 +149,9 @@ export const useGlobalStore = defineStore('global', {
         // Get balances
         async loadBalances() {
             // Get balances request
-            await jetpack.loadBalances().then(() => {
+            await window.jetPack.loadBalances().then(() => {
                 // Set balances
-                this.balance = jetpack.getBalances().find(el => el.denom === 'factory/neutron1heydp9f3977kq7c4fecrkra9etdqlu9al954cs/uboom')
+                this.balance = window.jetPack.getBalances().find(el => el.denom === 'factory/neutron1heydp9f3977kq7c4fecrkra9etdqlu9al954cs/uboom')
             })
         },
 
@@ -243,8 +243,8 @@ export const useGlobalStore = defineStore('global', {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        telegram_id: jetpack.getTgUserID(),
-                        address: jetpack.getAddress()
+                        telegram_id: window.jetPack.getTgUserID(),
+                        address: window.jetPack.getAddress()
                     })
                 })
             } catch (error) {
@@ -279,10 +279,10 @@ export const useGlobalStore = defineStore('global', {
             }
 
             // Create bet request
-            await jetpack.sendTx([{
+            await window.jetPack.sendTx([{
                 typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
                 value: {
-                    sender: jetpack.getAddress(),
+                    sender: window.jetPack.getAddress(),
                     contract: 'neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc',
                     msg: new TextEncoder().encode(JSON.stringify(msg)),
                     funds: [{
@@ -357,7 +357,7 @@ export const useGlobalStore = defineStore('global', {
                 // Get rewards request
                 return await this.client.queryContractSmart('neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc', {
                     my_pending_reward_rounds: {
-                        player: jetpack.getAddress()
+                        player: window.jetPack.getAddress()
                     }
                 })
             } catch (error) {
@@ -370,10 +370,10 @@ export const useGlobalStore = defineStore('global', {
         // Claim rewards
         async claimRewards() {
             // Claim rewards request
-            await jetpack.sendTx([{
+            await window.jetPack.sendTx([{
                 typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
                 value: {
-                    sender: jetpack.getAddress(),
+                    sender: window.jetPack.getAddress(),
                     contract: 'neutron1jktw2g347yte6rqn3m0qg0ll6t28ru22ayyp9xydc7aj3l9jm3rqcry2xc',
                     msg: new TextEncoder().encode(JSON.stringify({ collect_winnings: {} }))
                 }

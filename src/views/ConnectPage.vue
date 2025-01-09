@@ -45,17 +45,19 @@
 
         // Connect wallet
         await store.connectWallet().then(async () => {
-            // Check user account
-            await store.checkUserAccount()
+            try {
+                // Check user account
+                await store.checkUserAccount()
 
-            if (store.isRegistered !== null && store.isRegistered === false) {
-                // Redirect
-                router.push({ path: '/register' })
-            }
-
-            if (store.isRegistered) {
-                // Redirect
-                router.push({ path: '/main' })
+                if (store.isRegistered) {
+                    // Redirect
+                    router.push({ path: '/main' })
+                }
+            } catch(error) {
+                if (store.isRegistered !== null && store.isRegistered === false) {
+                    // Redirect
+                    router.push({ path: '/register' })
+                }
             }
 		}).catch(error => {
             // Error request

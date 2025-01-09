@@ -19,6 +19,7 @@
 <script setup>
 	import { ref, inject, onMounted } from 'vue'
     import { useGlobalStore } from '@/store'
+    import { useRouter } from 'vue-router'
 
 	// Components
     import RegisterSuccessModal from '@/components/RegisterSuccessModal.vue'
@@ -26,6 +27,7 @@
 
 	const store = useGlobalStore(),
 		emitter = inject('emitter'),
+        router = useRouter(),
 		showRegisterSuccessModal = ref(false)
 
 
@@ -47,4 +49,22 @@
 		// Hide register success modal
         showRegisterSuccessModal.value = false
     })
+
+
+	// JetPack event wallet changed
+	window.jetPack.on('walletChanged', () => {
+		// Reset websocket connection
+		if (store.websocket) {
+			store.websocket.onopen = null
+			store.websocket.onmessage = null
+
+			store.websocket.close()
+		}
+
+		// Reset connected status
+		store.isConnected = false
+
+		// Redirect
+		router.push({ path: '/' })
+	})
 </script>
