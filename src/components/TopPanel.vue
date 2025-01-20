@@ -31,6 +31,16 @@
                 <div class="address">
                     {{ store.getUserAddress().slice(0, 9) + '...' + store.getUserAddress().slice(-6) }}
                 </div>
+
+                <!-- User - 1-Click -->
+                <div class="status_1_click" @click.prevent="emitter.emit('show_profile_modal')">
+                    <div class="point" :class="{ green: store.isGranted }"></div>
+
+                    <span>1-Click:</span>
+
+                    <span v-if="store.isGranted">On</span>
+                    <span v-else>Off</span>
+                </div>
             </div>
 
             <!-- User - Avatar -->
@@ -43,10 +53,12 @@
 
 
 <script setup>
+    import { inject } from 'vue'
     import { useGlobalStore } from '@/store'
 
 
-    const store = useGlobalStore()
+    const store = useGlobalStore(),
+        emitter = inject('emitter')
 </script>
 
 
@@ -65,7 +77,7 @@
         justify-content: space-between;
 
         width: 100%;
-        padding: 11px 10px;
+        padding: 5px 10px;
 
         border-radius: 0 0 10px 10px;
         background: #001802;
@@ -131,14 +143,14 @@
         flex-wrap: wrap;
         justify-content: flex-start;
 
-        padding: 6px 8px;
+        padding: 6px 10px;
 
         text-align: right;
 
         border-radius: 6px;
         background: #000e01;
 
-        gap: 6px;
+        gap: 8px;
     }
 
 
@@ -186,6 +198,44 @@
     {
         font-size: 12px;
         font-weight: 100;
+
+        margin-top: -5px;
+    }
+
+
+    .user .status_1_click
+    {
+        font-size: 12px;
+        font-weight: 100;
+
+        display: flex;
+        align-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+
+        margin-top: 2px;
+
+        gap: 2px;
+    }
+
+
+    .user .status_1_click .point
+    {
+        width: 8px;
+        height: 8px;
+        margin-right: 2%;
+
+        transition: background .2s linear;
+
+        border-radius: 50%;
+        background: #ff3232;
+    }
+
+
+    .user .status_1_click .point.green
+    {
+        background: #2eff26;
     }
 
 

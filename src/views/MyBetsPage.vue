@@ -310,6 +310,7 @@
     .filter
     {
         display: flex;
+        overflow: hidden;
         align-content: center;
         align-items: center;
         flex-wrap: nowrap;
@@ -318,7 +319,6 @@
         width: calc(100% - 20px);
         margin: 0 10px 10px;
 
-        border: 1px solid #252849;
         border-radius: 6px;
         background: #000e01;
     }
@@ -338,7 +338,8 @@
 
     .filter .btn.active
     {
-        background: #252849;
+        color: #000e01;
+        background: #fff200;
     }
 
 

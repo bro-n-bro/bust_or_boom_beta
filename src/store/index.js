@@ -13,6 +13,8 @@ export const useGlobalStore = defineStore('global', {
         isRTCConnected: false,
         isConnected: false,
         isRegistered: null,
+        isGranted: false,
+        isAnyModalOpen: false,
 
         user: null,
         balance: null,
@@ -71,6 +73,44 @@ export const useGlobalStore = defineStore('global', {
         // Get user address
         getUserAddress() {
             return window.jetPack.getAddress()
+        },
+
+
+
+        // Create grant
+        async createGrant() {
+            try {
+                let now = new Date(),
+                    expirationDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+
+                // Request
+                await window.jetPack.sendTx([{
+                    granter: window.jetPack.getAddress(),
+                    grantee: '',
+                    grant: {
+                        authorization: {
+                            typeUrl: '/cosmos.authz.v1beta1.SendAuthorization',
+                            value: {}
+                        },
+                        expiration: expirationDate.toISOString()
+                    }
+                }]).then((result) => {
+                    // Get error as a result
+                    if (result.type === 'error') {
+                        // Throwing an exception
+                        throw error
+                    }
+
+                    // Get tx as a result
+                    if (result.type === 'tx') {
+                        // Set grant status
+                        this.isGranted = true
+                    }
+                })
+            } catch (error) {
+                // Throwing an exception
+                throw error
+            }
         },
 
 

@@ -1,39 +1,67 @@
 <template>
     <!-- Create account -->
     <div class="create_account">
-        <!-- Create account - Title -->
+        <template v-if="step === 1">
+        <!-- Registration - Title -->
         <div class="title">Registration</div>
 
-        <!-- Create account - Form -->
+        <!-- Registration - Form -->
         <form @submit.prevent="onSubmit()" :class="{ disabled: isProcess }">
-            <!-- Create account - Field -->
+            <!-- Registration - Field -->
             <div class="line">
-                <!-- Create account - Field label -->
+                <!-- Registration - Field label -->
                 <div class="label">Enter your nickname:</div>
 
                 <div class="field">
-                    <!-- Create account - Input -->
+                    <!-- Registration - Input -->
                     <input type="text" class="input" v-model="username" placeholder="Enter your nickname:"
                         @input="validateUsername()">
                 </div>
             </div>
 
-            <!-- Create account - Description -->
+            <!-- Registration - Description -->
             <div class="line desc">
                 Hello!<br>
                 Enter your nickname. You will receive 100 Boom Coins as a new player. Good luck!
             </div>
 
-            <!-- Create account - Image -->
+            <!-- Registration - Image -->
             <div class="line img">
                 <img src="@/assets/register_img.png" alt="">
             </div>
 
             <div class="submit">
-                <!-- Create account - Submit button -->
-                <button type="submit" class="submit_btn" :class="{ disabled: !isFormValid }">Register</button>
+                <!-- Registration - Submit button -->
+                <button type="submit" class="submit_btn" :class="{ disabled: !isFormValid }">Next</button>
             </div>
         </form>
+        </template>
+
+
+        <template v-if="step === 2">
+        <!-- 1-Click Activation - Title -->
+        <div class="title">1-Click Activation</div>
+
+        <!-- 1-Click Activation - Description -->
+        <div class="desc">You also can turn on 1-Click transactions at the beginning to give Jet Wallet access.</div>
+
+        <!-- 1-Click Activation - Image -->
+        <div class="img">
+            <img src="@/assets/register_img.png" alt="" class="small">
+        </div>
+
+        <div class="btns">
+            <!-- 1-Click Activation - Registration with 1-Click button -->
+            <button class="btn" @click.prevent="registerWith1Click()">
+                <img src="@/assets/bg_with_1_click_btn.png" alt="">
+                <span>Registration with 1-Click</span>
+                <img src="@/assets/bg_with_1_click_btn2.png" alt="">
+            </button>
+
+            <!-- 1-Click Activation - Register button -->
+            <button class="btn dark" @click.prevent="register()">Registration</button>
+        </div>
+        </template>
     </div>
 </template>
 
@@ -47,6 +75,7 @@
     const store = useGlobalStore(),
         router = useRouter(),
         emitter = inject('emitter'),
+        step = ref(1),
         username = ref(''),
         isFormValid = ref(false),
         isProcess = ref(false)
@@ -73,6 +102,13 @@
 
     // Submit form
     async function onSubmit() {
+        // Move to second step
+        step.value = 2
+    }
+
+
+    // Register
+    async function register() {
         // Set process status
         isProcess.value = true
 
@@ -89,6 +125,41 @@
             // Set process status
             isProcess.value = false
         } else {
+            // Check user account
+            await store.checkUserAccount()
+
+            if (store.isRegistered) {
+                // Event "show_register_success_modal"
+                emitter.emit('show_register_success_modal')
+
+                // Redirect
+                router.push({ path: '/main' })
+            }
+        }
+    }
+
+
+    // Register with 1-Click
+    async function registerWith1Click() {
+        // Set process status
+        isProcess.value = true
+
+        // Get faucet
+        await store.faucet()
+
+        // Create user account
+        let result = await store.createUserAccount({
+            username: username.value,
+            display_name: username.value
+        })
+
+        if (!result) {
+            // Set process status
+            isProcess.value = false
+        } else {
+            // Create grant
+            await store.createGrant()
+
             // Check user account
             await store.checkUserAccount()
 
@@ -122,6 +193,103 @@
 
         margin-bottom: 20px;
         padding: 0 10px;
+    }
+
+
+    .desc
+    {
+        padding: 0 10px;
+    }
+
+
+    .img
+    {
+        margin-top: auto;
+    }
+
+
+    .img img
+    {
+        display: block;
+
+        width: 224px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+
+    .img img.small
+    {
+        width: 192px;
+    }
+
+
+    .btns
+    {
+        display: flex;
+        flex-direction: column;
+
+        padding: 48px 10px 0;
+
+        gap: 10px;
+    }
+
+
+    .btns .btn
+    {
+        font-size: 18px;
+        font-weight: 500;
+
+        position: relative;
+
+        display: block;
+        overflow: hidden;
+
+        width: 100%;
+        height: 52px;
+
+        transition: opacity .2s linear;
+
+        color: #fff;
+        border-radius: 12px;
+        background: linear-gradient(112deg, #ab40ff 1.84%, #7800d6 89.88%);
+    }
+
+
+    .btns .btn.dark
+    {
+        background: #001802;
+    }
+
+
+    .btns .btn img
+    {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+
+        display: block;
+
+        width: 62.5px;
+
+        pointer-events: none;
+    }
+
+
+    .btns .btn img ~ img
+    {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: auto;
+    }
+
+
+    .btns .btn span
+    {
+        position: relative;
+        z-index: 3;
     }
 
 
@@ -202,28 +370,6 @@
     form .input:-webkit-autofill
     {
         -webkit-box-shadow: inset 0 0 0 50px #001802 !important;
-    }
-
-
-    form .desc
-    {
-        padding: 0 10px;
-    }
-
-
-    form .img
-    {
-        margin-top: auto;
-    }
-
-
-    form .img img
-    {
-        display: block;
-
-        width: 224px;
-        max-width: 100%;
-        margin: 0 auto;
     }
 
 
