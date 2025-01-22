@@ -60,11 +60,13 @@
 
                     <!-- My bets page - Live bet - Image -->
                     <div class="image">
-                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) <= calcCurrentPrice()">
-                        <img src="@/assets/live_bet_img.png" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) > calcCurrentPrice()">
+                        <img :src="bet.memePositive" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) <= calcCurrentPrice()">
 
-                        <img src="@/assets/live_bet_img3.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) <= calcCurrentPrice()">
-                        <img src="@/assets/live_bet_img2.png" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) > calcCurrentPrice()">
+                        <img :src="bet.memeNegative" alt="" v-if="bet.type === 'bull' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) > calcCurrentPrice()">
+
+                        <img :src="bet.memeNegative" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) <= calcCurrentPrice()">
+
+                        <img :src="bet.memePositive" alt="" v-if="bet.type === 'bear' && calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals) > calcCurrentPrice()">
                     </div>
 
                     <!-- My bets page - Live bet - Bottom -->
@@ -104,54 +106,68 @@
                 <!-- My bets page - Finished bet -->
                 <div class="finished" v-else>
                     <!-- My bets page - Finished bet - Delete button -->
-                    <button class="delete_btn" @click.prevent="deleteBet(bet.bet_id)">
-                         <!-- My bets page - Finished bet - Delete button icon -->
+                    <!-- <button class="delete_btn" @click.prevent="deleteBet(bet.bet_id)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M17.3957 7.81286C17.7295 7.47912 17.7295 6.93802 17.3957 6.60429C17.062 6.27055 16.5209 6.27055 16.1871 6.60429L12 10.7914L7.81286 6.60429C7.47912 6.27055 6.93802 6.27055 6.60429 6.60429C6.27055 6.93802 6.27055 7.47912 6.60429 7.81286L10.7914 12L6.60429 16.1871C6.27055 16.5209 6.27055 17.062 6.60429 17.3957C6.93802 17.7295 7.47912 17.7295 7.81286 17.3957L12 13.2086L16.1871 17.3957C16.5209 17.7295 17.062 17.7295 17.3957 17.3957C17.7295 17.062 17.7295 16.5209 17.3957 16.1871L13.2086 12L17.3957 7.81286Z" fill="currentColor"/>
                         </svg>
-                    </button>
+                    </button> -->
 
                     <!-- My bets page - Finished bet - Image -->
                     <div class="image">
-                        <img src="@/assets/bet_result_won.jpg" alt="" v-if="bet.finished_round.winner === bet.type">
-                        <img src="@/assets/bet_result_lose.jpg" alt="" v-else>
+                        <img :src="bet.memePositive" alt="">
                     </div>
 
-                    <div>
-                        <!-- My bets page - Finished bet - Prices -->
-                        <div class="prices">
-                            <!-- My bets page - Finished bet - Round price -->
-                            <span>
-                                {{ calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
-                            </span>
-
-                            Vs.
-
-                            <!-- My bets page - Finished bet - Finished price -->
-                            <span>
-                                {{ calcFinishedPrice(bet.finished_round.close_price, bet.roundInfo.live_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
-                            </span>
-                        </div>
-
+                    <div class="center">
                         <!-- My bets page - Finished bet - Status -->
                         <div class="status">
                             <!-- My bets page - Finished bet - Status won -->
-                            <span class="green" v-if="bet.finished_round.winner === bet.type">You won</span>
+                            <span class="green" v-if="bet.finished_round.winner === bet.type">Won</span>
 
                             <!-- My bets page - Finished bet - Status lose -->
-                            <span class="red" v-else>You lose</span>
+                            <span class="red" v-else>Lost</span>
                         </div>
 
-                        <!-- My bets page - Finished bet - Prize -->
-                        <div class="prize">
-                            <!-- My bets page - Finished bet - Prize won -->
-                            <span v-if="bet.finished_round.winner === bet.type">
-                                {{ bet.prize.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }} Boom
-                            </span>
+                        <!-- My bets page - Finished bet - Prices -->
+                        <div class="prices">
+                            <!-- My bets page - Finished bet - Bet price -->
+                            <div class="price bet">
+                                <div class="label">Bet</div>
 
-                            <!-- My bets page - Finished bet - Prize lose -->
-                            <span v-else>-{{ bet.amount }} Boom</span>
+                                <div class="val" :class="{ green: bet.type === 'bull', red: bet.type === 'bear' }">
+                                    {{ calcFinishedPrice(bet.finished_round.close_price, bet.roundInfo.live_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                                </div>
+                            </div>
+
+                            <div class="vs">Vs.</div>
+
+                            <div class="price round">
+                                <!-- My bets page - Finished bet - Round price -->
+                                <div class="label">Round</div>
+
+                                <div class="val">
+                                    {{ calcFixedPrice(bet.roundInfo.live_round.open_price, bet.roundInfo.live_round.decimals).toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                                </div>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- My bets page - Finished bet - Image -->
+                    <div class="image">
+                        <img :src="bet.memeNegative" alt="">
+                    </div>
+
+                    <!-- My bets page - Finished bet - Prize -->
+                    <div class="prize">
+                        <!-- My bets page - Finished bet - Prize won -->
+                        <span v-if="bet.finished_round.winner === bet.type">
+                            {{ bet.prize.toLocaleString('ru-RU', { maximumFractionDigits: 4 }).replace(',', '.') }}
+                        </span>
+
+                        <!-- My bets page - Finished bet - Prize lose -->
+                        <span v-else>-{{ bet.amount }}</span>
+
+                        <!-- My bets page - Finished bet - Prize img -->
+                        <img src="@/assets/boom_logo.svg" alt="">
                     </div>
                 </div>
             </div>
@@ -187,7 +203,16 @@
 
     onBeforeMount(async () => {
         // Get bets
-        store.bets.forEach(async bet => bet.finished_round = await store.getFinishedRound(bet.round_id).catch(error => null))
+        store.bets.forEach(async bet => {
+            // Gert finished round
+            bet.finished_round = await store.getFinishedRound(bet.round_id).catch(error => null)
+
+            // Set memes
+            bet.memePositive = getPositiveMeme()
+            bet.memeNegative = getNegativeMeme()
+        })
+
+        console.log(store.bets)
 
         // Filter bets
         filterResult.value = store.bets
@@ -296,347 +321,449 @@
         // Rset rewards value
         isRewards.value = 0
     }
+
+
+    // Get positive meme
+    function getPositiveMeme() {
+        let number = Math.floor(Math.random() * (process.env.MEME_POSITIVE_FILE_COUNT - 1 + 1)) + 1
+
+        return require(`@/assets/meme/Positive/Positive_${number}.png`)
+    }
+
+
+    // Get negative meme
+    function getNegativeMeme() {
+        let number = Math.floor(Math.random() * (process.env.MEME_NEGATIVE_FILE_COUNT - 1 + 1)) + 1
+
+        return require(`@/assets/meme/Negative/negative_${number}.png`)
+    }
 </script>
 
 
 <style scoped>
-    .my_bets_page
-    {
-        padding-top: 79px;
-        padding-bottom: 62px;
-    }
+.my_bets_page
+{
+    padding-top: 79px;
+    padding-bottom: 62px;
+}
 
 
-    .filter
-    {
-        display: flex;
-        overflow: hidden;
-        align-content: center;
-        align-items: center;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
+.filter
+{
+    display: flex;
+    overflow: hidden;
+    align-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
 
-        width: calc(100% - 20px);
-        margin: 0 10px 10px;
+    width: calc(100% - 20px);
+    margin: 0 10px 10px;
 
-        border-radius: 6px;
-        background: #000e01;
-    }
+    border-radius: 6px;
+    background: #000e01;
+}
 
 
-    .filter .btn
-    {
-        font-size: 16px;
-        font-weight: 500;
+.filter .btn
+{
+    font-size: 16px;
+    font-weight: 500;
 
-        width: 100%;
-        height: 24px;
+    width: 100%;
+    height: 24px;
 
-        transition: .2s linear;
-    }
+    transition: .2s linear;
+}
 
 
-    .filter .btn.active
-    {
-        color: #000e01;
-        background: #fff200;
-    }
+.filter .btn.active
+{
+    color: #000e01;
+    background: #fff200;
+}
 
 
 
-    .list
-    {
-        display: flex;
-        flex-direction: column;
+.list
+{
+    display: flex;
+    flex-direction: column;
 
-        padding: 0 10px 82px;
+    padding: 0 10px 82px;
 
-        gap: 10px;
-    }
+    gap: 10px;
+}
 
 
 
-    .bet
-    {
-        position: relative;
-    }
+.bet
+{
+    position: relative;
+}
 
 
-    .bet .delete_btn
-    {
-        position: absolute;
-        top: 5px;
-        right: 5px;
+.bet .delete_btn
+{
+    position: absolute;
+    top: 5px;
+    right: 5px;
 
-        display: flex;
-        align-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: center;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
 
-        width: 24px;
-        height: 24px;
-    }
+    width: 24px;
+    height: 24px;
+}
 
 
-    .bet .delete_btn svg
-    {
-        display: block;
+.bet .delete_btn svg
+{
+    display: block;
 
-        width: 24px;
-        height: 24px;
+    width: 24px;
+    height: 24px;
 
-        pointer-events: none;
-    }
+    pointer-events: none;
+}
 
 
 
-    .bet .live
-    {
-        position: relative;
+.bet .live
+{
+    position: relative;
 
-        padding: 10px;
+    padding: 10px;
 
-        border-radius: 12px;
-        background: #001802;
-    }
+    border-radius: 12px;
+    background: #001802;
+}
 
 
-    .bet .live .head
-    {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: space-between;
+.bet .live .head
+{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
-        margin-bottom: 30px;
-        padding: 10px 10px 8px;
+    margin-bottom: 30px;
+    padding: 10px 10px 8px;
 
-        border-radius: 6px;
-        background: #000e01;
-    }
+    border-radius: 6px;
+    background: #000e01;
+}
 
 
-    .bet .live .head .label
-    {
-        font-weight: 600;
-    }
+.bet .live .head .label
+{
+    font-weight: 600;
+}
 
 
-    .bet .live .head .val
-    {
-        font-size: 24px;
-        font-weight: 700;
-    }
+.bet .live .head .val
+{
+    font-size: 24px;
+    font-weight: 700;
+}
 
 
-    .bet .live .head .val.green
-    {
-        color: #00d712;
-    }
+.bet .live .head .val.green
+{
+    color: #00d712;
+}
 
-    .bet .live .head .val.red
-    {
-        color: #f00;
-    }
+.bet .live .head .val.red
+{
+    color: #f00;
+}
 
 
-    .bet .live .head .vs
-    {
-        display: block;
+.bet .live .head .vs
+{
+    display: block;
 
-        width: 42px;
-    }
+    width: 42px;
+}
 
 
-    .bet .live .image
-    {
-        display: flex;
-        align-content: flex-end;
-        align-items: flex-end;
-        flex-wrap: wrap;
-        justify-content: center;
+.bet .live .image
+{
+    display: flex;
+    align-content: flex-end;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
 
-        margin-bottom: 20px;
-    }
+    margin-bottom: 20px;
+}
 
 
-    .bet .live .image img
-    {
-        display: block;
+.bet .live .image img
+{
+    display: block;
 
-        width: 280px;
-        max-width: 100%;
-    }
+    width: 250px;
+    max-width: 100%;
+}
 
 
-    .bet .live .bottom
-    {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: space-between;
+.bet .live .bottom
+{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
-        padding: 10px;
+    padding: 10px;
 
-        border-radius: 6px;
-        background: #000e01;
-    }
+    border-radius: 6px;
+    background: #000e01;
+}
 
 
-    .bet .live .bottom .label
-    {
-        font-size: 16px;
-        font-weight: 600;
-    }
+.bet .live .bottom .label
+{
+    font-size: 16px;
+    font-weight: 600;
+}
 
 
-    .bet .live .bottom .val
-    {
-        font-size: 35px;
-        font-weight: 700;
-        line-height: 100%;
+.bet .live .bottom .val
+{
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 100%;
 
-        display: flex;
-        align-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: flex-start;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 
-        color: #fff200;
+    color: #fff200;
 
-        gap: 4px;
-    }
+    gap: 4px;
+}
 
 
-    .bet .live .bottom .val img
-    {
-        display: block;
+.bet .live .bottom .val img
+{
+    display: block;
 
-        width: 36px;
-        height: 36px;
-    }
+    width: 36px;
+    height: 36px;
+}
 
 
 
-    .bet .finished
-    {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: space-between;
+.bet .finished
+{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
-        padding: 10px;
+    padding: 10px;
 
-        border-radius: 12px;
-        background: #001802;
+    border-radius: 12px;
+    background: #001802;
 
-        gap: 10px;
-    }
+    gap: 10px;
+}
 
 
-    .bet .finished .image
-    {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: center;
+.bet .finished .image
+{
+    width: 70px;
+    height: 70px;
 
-        width: 110px;
-        height: 110px;
-    }
+    border-radius: 6px;
+}
 
 
-    .bet .finished .image img
-    {
-        display: block;
+.bet .finished .image img
+{
+    display: block;
 
-        max-width: 100%;
-        max-height: 100%;
-    }
+    max-width: 100%;
+    max-height: 100%;
 
+    border-radius: inherit;
 
-    .bet .finished .image + *
-    {
-        width: calc(100% - 120px);
+    object-fit: cover;
+}
 
-        text-align: center;
-    }
 
+.bet .finished .center
+{
+    display: flex;
+    align-self: center;
+    flex-direction: column;
 
-    .bet .finished .prices
-    {
-        font-weight: 600;
-    }
+    width: calc(100% - 180px);
 
+    gap: 4px;
+}
 
-    .bet .finished .prices span
-    {
-        font-size: 20px;
-    }
 
+.bet .finished .status
+{
+    font-size: 24px;
+    font-weight: 600;
 
+    padding: 4px 0;
 
-    .bet .finished .status
-    {
-        font-size: 32px;
-        font-weight: 600;
-    }
+    text-align: center;
+}
 
 
-    .bet .finished .status .green
-    {
-        color: #09ff00;
-    }
+.bet .finished .status .green
+{
+    color: #09ff00;
+}
 
-    .bet .finished .status .red
-    {
-        color: #f00;
-    }
+.bet .finished .status .red
+{
+    color: #f00;
+}
 
 
-    .bet .finished .prize
-    {
-        font-size: 20px;
-        font-weight: 600;
-    }
 
+.bet .finished .prices
+{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
 
 
-    .empty
-    {
-        font-size: 20px;
-        font-weight: 600;
+.bet .finished .prices .vs
+{
+    font-size: 14px;
+    font-weight: 600;
+}
 
-        padding: 24px 12px;
 
-        text-align: center;
+.bet .finished .price
+{
+    width: calc(50% - 14px);
+}
 
-        opacity: .75;
-    }
 
+.bet .finished .price.round
+{
+    text-align: right;
+}
 
 
-    .claim_btn
-    {
-        font-weight: 500;
+.bet .finished .price .label
+{
+    font-size: 14px;
+    font-weight: 600;
+}
 
-        position: fixed;
-        z-index: 9;
-        right: 0;
-        bottom: 72px;
-        left: 0;
 
-        width: calc(100% - 40px);
-        height: 52px;
-        margin: 0 auto;
+.bet .finished .price .val
+{
+    font-size: 20px;
+    font-weight: 600;
+}
 
-        border-radius: 12px;
-        background: #0f73ff;
-        box-shadow: 0 0 15px #062600;
-    }
+
+.bet .finished .price .val.green
+{
+    color: #09ff00;
+}
+
+.bet .finished .price .val.red
+{
+    color: #f00;
+}
+
+
+.bet .finished .prize
+{
+    font-size: 24px;
+    font-weight: 600;
+
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 100%;
+    padding: 6px;
+
+    color: #fff200;
+    border-radius: 6px;
+    background: #000e01;
+
+    gap: 6px;
+}
+
+
+.bet .finished .prize img
+{
+    display: block;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+    background: #fff;
+}
+
+
+
+.empty
+{
+    font-size: 20px;
+    font-weight: 600;
+
+    padding: 24px 12px;
+
+    text-align: center;
+
+    opacity: .75;
+}
+
+
+
+.claim_btn
+{
+    font-weight: 500;
+
+    position: fixed;
+    z-index: 9;
+    right: 0;
+    bottom: 72px;
+    left: 0;
+
+    width: calc(100% - 40px);
+    height: 52px;
+    margin: 0 auto;
+
+    border-radius: 12px;
+    background: #0f73ff;
+    box-shadow: 0 0 15px #062600;
+}
+
+
+
+
+
+
+
+
+
 </style>

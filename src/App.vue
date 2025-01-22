@@ -22,9 +22,10 @@
 
 
 <script setup>
-	import { ref, inject, onMounted, onUnmounted } from 'vue'
+	import { ref, inject, onBeforeMount, onMounted, onUnmounted } from 'vue'
     import { useGlobalStore } from '@/store'
     import { useRouter } from 'vue-router'
+    import { useTitle } from '@vueuse/core'
 
 	// Components
     import RegisterSuccessModal from '@/components/RegisterSuccessModal.vue'
@@ -34,11 +35,18 @@
 	const store = useGlobalStore(),
 		emitter = inject('emitter'),
         router = useRouter(),
+        title = useTitle(),
         startY = ref(0),
         isPulling = ref(false),
         threshold = 70,
 		showRegisterSuccessModal = ref(false),
 		showProfileModal = ref(false)
+
+
+    onBeforeMount(() => {
+        // Set page title
+        title.value = 'Bust or Boom'
+    })
 
 
 	onMounted(() => {
