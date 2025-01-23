@@ -388,7 +388,7 @@
 
 
         // Public method to send Tx
-        sendTx(messages) {
+        sendTx(messages, methodName = 'sendTx') {
             return new Promise((resolve, reject) => {
                 if (!this.#isConnected || !this.#conn) {
                     return reject('No connection established.')
@@ -406,7 +406,7 @@
 
                 // Send message
                 this.#conn.send({
-                    method: 'sendTx',
+                    method: methodName,
                     data: {
                         peer_id: this.#peerID,
                         chain_id: this.#chainId,
