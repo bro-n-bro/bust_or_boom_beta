@@ -16,7 +16,7 @@
 
 	<!-- Overlay -->
 	<transition name="fade">
-	<div class="modal_overlay" @click.prevent="emitter.emit('close_register_success_modal')" v-if="showRegisterSuccessModal || showProfileModal"></div>
+	<div class="modal_overlay" @click.prevent="emitter.emit('close_any_modal')" v-if="showRegisterSuccessModal || showProfileModal"></div>
     </transition>
 </template>
 
@@ -141,6 +141,9 @@
 
 	// Event "close_any_modal"
 	emitter.on('close_any_modal', () => {
+        // Hide register success modal
+        showRegisterSuccessModal.value = false
+
 		// Hide profile modal
         showProfileModal.value = false
 

@@ -49,6 +49,9 @@
                 // Check user account
                 await store.checkUserAccount()
 
+                // Get grants
+                await store.getGrants()
+
                 if (store.isRegistered) {
                     // Redirect
                     router.push({ path: '/main' })

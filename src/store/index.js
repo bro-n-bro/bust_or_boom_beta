@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { SendAuthorization } from 'cosmjs-types/cosmos/bank/v1beta1/authz'
 // import JetPack from 'jetpack'
 
 
@@ -24,6 +25,7 @@ export const useGlobalStore = defineStore('global', {
         websocket: null,
         client: null,
 
+        grants: [],
         bets: useLocalStorage('bets', []),
 
         chainID: 'pion-1',
@@ -73,44 +75,6 @@ export const useGlobalStore = defineStore('global', {
         // Get user address
         getUserAddress() {
             return window.jetPack.getAddress()
-        },
-
-
-
-        // Create grant
-        async createGrant() {
-            try {
-                let now = new Date(),
-                    expirationDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
-
-                // Request
-                await window.jetPack.sendTx([{
-                    granter: window.jetPack.getAddress(),
-                    grantee: '',
-                    grant: {
-                        authorization: {
-                            typeUrl: '/cosmos.authz.v1beta1.SendAuthorization',
-                            value: {}
-                        },
-                        expiration: expirationDate.toISOString()
-                    }
-                }]).then((result) => {
-                    // Get error as a result
-                    if (result.type === 'error') {
-                        // Throwing an exception
-                        throw error
-                    }
-
-                    // Get tx as a result
-                    if (result.type === 'tx') {
-                        // Set grant status
-                        this.isGranted = true
-                    }
-                })
-            } catch (error) {
-                // Throwing an exception
-                throw error
-            }
         },
 
 
@@ -183,6 +147,22 @@ export const useGlobalStore = defineStore('global', {
                 // Throwing an exception
                 throw error
             })
+        },
+
+
+        // Get grants
+        async getGrants() {
+            try {
+                let result = await fetch(`https://lcd.pion-1.bronbro.io/cosmos/authz/v1beta1/grants?granter=${window.jetPack.getAddress()}&grantee=neutron1smtqmvpaa8tp7ykeafm3h39grla54maw3v08tn`)
+                    .then(res => res.json())
+
+                if (result.grants.length) {
+                    this.grants = result.grants
+                    this.isGranted = true
+                }
+            } catch (error) {
+                console.error(error)
+            }
         },
 
 
@@ -445,6 +425,75 @@ export const useGlobalStore = defineStore('global', {
                 // Throwing an exception
                 throw error
             }
+        },
+
+
+        // Enable 1-Click
+        async enable1CLick() {
+            //Request
+            await window.jetPack.sendTx([{
+                typeUrl: '/cosmos.authz.v1beta1.MsgGrant',
+                value: {
+                    granter: window.jetPack.getAddress(),
+                    grantee: 'neutron1smtqmvpaa8tp7ykeafm3h39grla54maw3v08tn',
+                    grant: {
+                        authorization: {
+                            typeUrl: '/cosmos.bank.v1beta1.SendAuthorization',
+                            value: SendAuthorization.encode(SendAuthorization.fromPartial({
+                                spendLimit: [
+                                    {
+                                        denom: 'factory/neutron1heydp9f3977kq7c4fecrkra9etdqlu9al954cs/uboom',
+                                        amount: String(1000 * Math.pow(10, 6))
+                                    }
+                                ]
+                            })).finish()
+                        },
+                        expiration: {
+                            seconds: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+                            nanos: 0
+                        }
+                    }
+                }
+            }], 'setGrant').then((result) => {
+                // Get error as a result
+                if (result.type === 'error') {
+                    console.log(error)
+                }
+
+                // Get tx as a result
+                if (result.type === 'tx') {
+                    console.log(result)
+                }
+            }).catch(error => {
+                // Throwing an exception
+                throw error
+            })
+        },
+
+
+        // Disable 1-Click
+        async disable1CLick() {
+            await window.jetPack.sendTx([{
+                typeUrl: '/cosmos.authz.v1beta1.MsgRevoke',
+                value: {
+                    granter: window.jetPack.getAddress(),
+                    grantee: 'neutron1smtqmvpaa8tp7ykeafm3h39grla54maw3v08tn',
+                    msgTypeUrl: '/cosmos.bank.v1beta1.MsgSend'
+                }
+            }], 'setGrant').then((result) => {
+                // Get error as a result
+                if (result.type === 'error') {
+                    console.log(error)
+                }
+
+                // Get tx as a result
+                if (result.type === 'tx') {
+                    console.log(result)
+                }
+            }).catch(error => {
+                // Throwing an exception
+                throw error
+            })
         }
     }
 })

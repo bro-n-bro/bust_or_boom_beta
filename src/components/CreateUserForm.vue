@@ -1,12 +1,15 @@
 <template>
     <!-- Create account -->
     <div class="create_account">
+        <!-- Loader -->
+        <Loader v-if="isProcess" />
+
         <template v-if="step === 1">
         <!-- Registration - Title -->
         <div class="title">Registration</div>
 
         <!-- Registration - Form -->
-        <form @submit.prevent="onSubmit()" :class="{ disabled: isProcess }">
+        <form @submit.prevent="onSubmit()">
             <!-- Registration - Field -->
             <div class="line">
                 <!-- Registration - Field label -->
@@ -70,6 +73,9 @@
     import { ref, inject } from 'vue'
     import { useGlobalStore } from '@/store'
     import { useRouter } from 'vue-router'
+
+    // Components
+    import Loader from '@/components/Loader.vue'
 
 
     const store = useGlobalStore(),
@@ -157,11 +163,17 @@
             // Set process status
             isProcess.value = false
         } else {
-            // Create grant
-            await store.createGrant()
+            // Enable 1-Click
+            await store.enable1CLick().catch(error => {
+                // Error
+                console.log(error)
+            })
 
             // Check user account
             await store.checkUserAccount()
+
+            // Get grants
+            await store.getGrants()
 
             if (store.isRegistered) {
                 // Event "show_register_success_modal"
@@ -299,14 +311,6 @@
         display: flex;
         flex: 1 0 auto;
         flex-direction: column;
-    }
-
-
-    form.disabled
-    {
-        pointer-events: none;
-
-        opacity: .5;
     }
 
 

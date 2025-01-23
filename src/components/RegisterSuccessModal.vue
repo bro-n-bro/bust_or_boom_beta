@@ -21,7 +21,9 @@
                 <img src="@/assets/register_success_img.png" alt="" class="img">
 
                 <!-- Register success modal - Button -->
-                <button class="apply_btn" @click.prevent="emitter.emit('close_register_success_modal')">Enjoy</button>
+                <div class="btns">
+                    <button class="btn" @click.prevent="emitter.emit('close_register_success_modal')">Enjoy</button>
+                </div>
             </div>
         </div>
     </section>
@@ -34,3 +36,66 @@
 
     const emitter = inject('emitter')
 </script>
+
+
+<style scoped>
+    .modal_content
+    {
+        position: absolute;
+        z-index: 3;
+        bottom: 0;
+        left: 0;
+
+        display: flex;
+        overflow: auto;
+        align-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+    }
+
+
+    .modal_content .data
+    {
+        position: relative;
+
+        width: 100%;
+        padding: 20px;
+
+        pointer-events: auto;
+
+        border-radius: 20px;
+        background: #003504;
+    }
+
+
+    .modal_content .data:before
+    {
+        display: none;
+    }
+
+
+    .modal_content .title
+    {
+        font-size: 24px;
+        font-weight: 600;
+
+        margin-bottom: 24px;
+
+        text-align: center;
+    }
+
+
+    .modal_content .desc
+    {
+        font-size: 18px;
+
+        margin-bottom: 24px;
+
+        text-align: center;
+    }
+</style>
